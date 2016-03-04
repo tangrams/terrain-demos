@@ -1,6 +1,16 @@
 /*jslint browser: true*/
 /*global Tangram, gui */
 
+function parseQuery (qstr) {
+    var query = {};
+    var a = qstr.split('&');
+    for (var i in a) {
+        var b = a[i].split('=');
+        query[decodeURIComponent(b[0])] = decodeURIComponent(b[1]);
+    }
+    return query;
+}
+
 map = (function () {
     'use strict';
 
@@ -18,6 +28,15 @@ map = (function () {
         map_start_location = map_start_location.map(Number);
     }
 
+    // determine the scene url and content to load during start-up
+    var scene_url = 'scene.yaml';
+
+    // If there is a query, use it as the scene_url
+    var query = parseQuery(window.location.search.slice(1));
+    if (query.url) {
+        scene_url = query.url;
+    }
+
     /*** Map ***/
 
     var map = L.map('map',
@@ -25,9 +44,23 @@ map = (function () {
     );
 
     var layer = Tangram.leafletLayer({
-        scene: 'scene.yaml',
+        scene: scene_url,
         attribution: '<a href="https://mapzen.com/tangram" target="_blank">Tangram</a> | &copy; OSM contributors | <a href="https://mapzen.com/" target="_blank">Mapzen</a>'
     });
+
+    if (query.quiet) {
+        layer.options.attribution = "";
+        map.attributionControl.setPrefix('');
+        window.addEventListener("load", function() {
+            document.getElementById("mz-bug").style.display = "none";
+            document.getElementById("mz-citysearch").style.display = "none";
+            document.getElementById("mz-geolocator").style.display = "none";
+        });
+    }
+
+    if (query.noscroll) {
+        map.scrollWheelZoom.disable();
+    }
 
     window.layer = layer;
     var scene = layer.scene;
@@ -38,14 +71,7 @@ map = (function () {
 
     var hash = new L.Hash(map);
 
-    /***** Render loop *****/
-
-    window.addEventListener('load', function () {
-        // Scene initialized
-        layer.on('init', function() {
-        });
-        layer.addTo(map);
-    });
+    layer.addTo(map);
 
     return map;
 
