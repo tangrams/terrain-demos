@@ -14,7 +14,7 @@ styles:
         shaders:
             uniforms:
                 u_scale: .5
-                u_envmap: http://localhost:9000/demos/images/matball01.jpg
+                u_envmap: img/matball01.jpg
             blocks:
                 global: |
                     // Simplified view-independent environment map
