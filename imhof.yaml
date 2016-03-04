@@ -1,0 +1,58 @@
+sources:
+    osm: 
+        type: TopoJSON
+        url: //vector.mapzen.com/osm/all/{z}/{x}/{y}.topojson?api_key=vector-tiles-JUsa0Gc
+    normals:
+        type: Raster
+        url: https://s3.amazonaws.com/mapzen-terrain-dev-us-east/normal/{z}/{x}/{y}.png
+        max_zoom: 13
+
+styles: 
+    terrain-envmap:
+        base: raster
+        apply: normal
+        shaders:
+            uniforms:
+                u_scale: .15
+                u_envmap: img/imhof5.jpg
+            blocks:
+                global: |
+                    // Simplified view-independent environment map
+                    vec4 applyEnvmap (in sampler2D _tex, in vec3 _normal) {
+                        const vec3 eye = vec3(0.,0.,-1.);
+                        vec3 r = reflect(eye, _normal);
+                        r.z += 1.0;
+                        float m = 2. * length(r);
+                        vec2 uv = r.xy / m + .5;
+                        return texture2D(_tex, uv);
+                    }
+                color: |                    
+                    normal.z *= u_scale;
+                    normal = normalize(normal);
+                    color = applyEnvmap(u_envmap, normal);
+
+layers:
+    terrain:
+        data: { source: normals, layer: _default }
+        draw:
+            terrain-envmap:
+                order: 0
+
+    earth:
+        data: { source: osm }
+        draw:
+            lines: 
+                order: 2
+                color: [.3, .3, .3]
+                width: 1px
+
+    places:
+        data: { source: osm}
+        filter: 
+            kind: [city]
+        draw:
+            text:
+                font:
+                    fill: white
+                    size: 16px
+                    stroke: { color: '#444', width: 4px}

@@ -1,0 +1,50 @@
+sources:
+    osm: 
+        type: TopoJSON
+        url: //vector.mapzen.com/osm/all/{z}/{x}/{y}.topojson?api_key=vector-tiles-JUsa0Gc
+    normals:
+        type: Raster
+        url: https://s3.amazonaws.com/mapzen-terrain-dev-us-east/normal/{z}/{x}/{y}.png
+        max_zoom: 13
+
+lights:
+    light2:
+        type: directional
+        direction: [0,0,-1]
+        diffuse: [1.000, 1.000, 1.000]
+
+styles: 
+    hillshade:
+        base: raster
+        apply: false
+        shaders:
+            blocks:
+                normal: |
+                    float mult = 10.;
+                    normal = raster.rgb * mult - (mult - 1.);
+
+layers:
+    terrain:
+        data: { source: normals, layer: _default }
+        draw:
+            hillshade:
+                order: 0
+
+    earth:
+        data: { source: osm }
+        draw:
+            lines: 
+                order: 2
+                color: [.3, .3, .3]
+                width: 1px
+
+    places:
+        data: { source: osm}
+        filter: 
+            kind: [city]
+        draw:
+            text:
+                font:
+                    fill: white
+                    size: 16px
+                    stroke: { color: '#444', width: 4px}
