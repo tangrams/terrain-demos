@@ -1,8 +1,3 @@
-scene:
-    background:
-        color: lightblue
-    animated: true
-
 sources:
     osm: 
         type: TopoJSON
@@ -15,11 +10,11 @@ sources:
 lights:
     directional1:
         type: directional
-        direction: [1, -1, -.5]
+        direction: [-1, -1, -.5]
         diffuse: [0.353, 0.524, 0.555]
     directional2:
         type: directional
-        direction: [-1,-.5, -.5]
+        direction: [1,-.5, -.5]
         diffuse: [0.615, 0.559, 0.348]
     directional3:
         type: directional

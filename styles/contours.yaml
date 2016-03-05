@@ -44,7 +44,7 @@ styles:
                     // adjust width of line based on normals to produce thinner line on flatter surfaces
                     float adj = (1. / normal.z) * 1. - .9999;
                     float w = 1. * adj;
-                    float val = fract(h  * (100. * (1. + fract(u_time * .005))));
+                    float val = fract(h  * (50. * (1. + fract(u_time * .005))));
                     float triangle = abs(1. * val - 1.0);
                     float square = smoothstep(.0, w, triangle);
                     square *= smoothstep(w, w+w, val);
