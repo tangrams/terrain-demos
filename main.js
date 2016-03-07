@@ -52,9 +52,12 @@ map = (function () {
         layer.options.attribution = "";
         map.attributionControl.setPrefix('');
         window.addEventListener("load", function() {
-            document.getElementById("mz-bug").style.display = "none";
-            document.getElementById("mz-citysearch").style.display = "none";
-            document.getElementById("mz-geolocator").style.display = "none";
+            var div = document.getElementById("mz-bug");
+            if (div != null) {div.style.display = "none";}
+            div = document.getElementById("mz-citysearch");
+            if (div != null) {div.style.display = "none";}
+            div = document.getElementById("mz-geolocator");
+            if (div != null) {div.style.display = "none";}
         });
     }
 
