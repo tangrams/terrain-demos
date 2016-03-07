@@ -14,7 +14,7 @@ styles:
         shaders:
             uniforms:
                 u_scale: .15
-                u_envmap: ../img/imhof5.jpg
+                u_envmap: img/imhof5.jpg
             blocks:
                 global: |
                     // Simplified view-independent environment map
