@@ -1,10 +1,13 @@
+
+
+
 sources:
     osm: 
         type: TopoJSON
         url: //vector.mapzen.com/osm/all/{z}/{x}/{y}.topojson?api_key=vector-tiles-JUsa0Gc
     normals:
         type: Raster
-        url: https://s3.amazonaws.com/mapzen-terrain-dev-us-east/normal/{z}/{x}/{y}.png
+        url: https://s3.amazonaws.com/mapzen-terrain-dev-us-east/terrarium/{z}/{x}/{y}.png
         max_zoom: 13
 
 styles: 
@@ -12,33 +15,33 @@ styles:
         base: raster
         shaders:
             blocks:
+                global: |
+                    float unpack(vec4 h) {
+                        return (h.r * 1. + h.g / 256. + h.b / 65536.);
+                    }
                 color: |
-                    float height = 1. - color.a;
-                    color.a = 1.0;
-                                        
-                    // Color ramps
-                    vec3 colors[3];
-                    colors[0] = vec3(0.407,0.690,0.487);
-                    colors[1] = vec3(0.520,0.274,0.254);
-                    colors[2] = vec3(1., 1., 1.);
+                    float height = unpack(color);
+                    color = vec4(1.0);
                     
-                    float step1 = 0.032; // bottom
-                    float step2 = 0.134;
-                    float step3 = 0.154;
-                    float step4 = 0.712; // top
+                    // Color ramps
+                    vec3 colors[5];
+                    colors[0] = vec3(0., 0., .2);
+                    colors[1] = vec3(.2, .2, .6);
+                    colors[2] = vec3(0.411,0.725,0.626);
+                    colors[3] = vec3(0.480,0.232,0.205);
+                    colors[4] = vec3(1., 1., 1.);
+                    
+                    float step1 = 0.4; // bottom
+                    float step2 = 0.5;
+                    float step3 = 0.503;
+                    float step4 = 0.508;
+                    float step5 = 0.52; // top
                     
                     color.rgb = mix(colors[0], colors[1], smoothstep(step1, step2, height));
-                    color.rgb = mix(color.rgb, colors[1], smoothstep(step2, step3, height));
-                    color.rgb = mix(color.rgb, colors[2], smoothstep(step3, step4, height));
+                    color.rgb = mix(color.rgb, colors[2], smoothstep(step2, step3, height));
+                    color.rgb = mix(color.rgb, colors[3], smoothstep(step3, step4, height));
+                    color.rgb = mix(color.rgb, colors[4], smoothstep(step4, step5, height));
 
-                    // Dynamic color ramps
-                    //color.rgb = ramp[0].rgb;
-                    //const int nramps = int(num_ramps);
-                    //const int i = 0;
-                    //for (int i=0; i < nramps-1; i++) {
-                    //color.rgb = mix(color.rgb, ramp[i+1].rgb, smoothstep(ramp[i].a, ramp[i+1].a, height));
-                    //}
-                    //color.rgb = mix(color.rgb, ramp[nramps-1].rgb, smoothstep(ramp[nramps-1].a, 1., height));
 
 layers:
     terrain:
