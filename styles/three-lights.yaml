@@ -10,16 +10,16 @@ sources:
 lights:
     directional1:
         type: directional
-        direction: [-1, -1, -.5]
-        diffuse: [0.353, 0.524, 0.555]
+        direction: [1,-.5, -.5]
+        diffuse: [0.950, 0.865, 0.539]
     directional2:
         type: directional
-        direction: [1,-.5, -.5]
-        diffuse: [0.615, 0.559, 0.348]
+        direction: [-1, -1, -.5]
+        diffuse: [0.542, 0.807, 0.855]
     directional3:
         type: directional
         direction: [0, -1, .2]
-        diffuse: 1.0
+        diffuse: 1.5
 
 styles:
     hillshade:
