@@ -13,8 +13,8 @@ styles:
         apply: normal
         shaders:
             uniforms:
-                u_scale: .5
-                u_envmap: ../img/sunrise3.jpg
+                u_scale: .1
+                u_envmap: ../img/LitSphere_test_02.jpg
             blocks:
                 global: |
                     // Simplified view-independent environment map
