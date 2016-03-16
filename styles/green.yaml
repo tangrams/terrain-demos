@@ -1,0 +1,27 @@
+sources:
+    osm: 
+        type: TopoJSON
+        url: //vector.mapzen.com/osm/all/{z}/{x}/{y}.topojson?api_key=vector-tiles-JUsa0Gc
+    elevation:
+        type: Raster
+        url: https://s3.amazonaws.com/mapzen-terrain-dev-us-east/normal/{z}/{x}/{y}.png
+        max_zoom: 13
+
+lights:
+    directional1:
+        type: directional
+        direction: [0.5,-0.7,-0.5]
+        diffuse: [1, 1.000, 0.75]
+        ambient: [0.2, 0.3, 0.3]
+
+styles: 
+    hillshade:
+        base: raster
+        apply: normal
+
+layers:
+    terrain:
+        data: { source: elevation, layer: _default }
+        draw:
+            hillshade:
+                order: 0
