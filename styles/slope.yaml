@@ -20,7 +20,7 @@ styles:
         shaders:
             blocks:
                 normal: |
-                    float mult = 10.;
+                    float mult = 15.;
                     normal = raster.rgb * mult - (mult - 1.);
 
 layers:
