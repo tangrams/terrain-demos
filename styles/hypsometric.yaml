@@ -26,15 +26,15 @@ styles:
                     // Color ramps
                     vec3 colors[5];
                     colors[0] = vec3(0.);
-                    colors[1] = vec3(0.);
-                    colors[2] = vec3(.3, .5, .2);
-                    colors[3] = vec3(.3, .2, .1);
+                    colors[1] = vec3(.4, .55, .3);
+                    colors[2] = vec3(.9, .9, .6);
+                    colors[3] = vec3(.6, .4, .3);
                     colors[4] = vec3(1., 1., 1.);
                     
-                    float step1 = 0.5; // bottom
-                    float step2 = 0.501;
-                    float step3 = 0.503;
-                    float step4 = 0.506;
+                    float step1 = 0.5015; // bottom
+                    float step2 = 0.503;
+                    float step3 = 0.505;
+                    float step4 = 0.51;
                     float step5 = 0.52; // top
                     
                     color.rgb = mix(colors[0], colors[1], smoothstep(step1, step2, height));
