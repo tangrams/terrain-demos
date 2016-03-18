@@ -14,7 +14,7 @@ function parseQuery (qstr) {
 map = (function () {
     'use strict';
 
-    var map_start_location = [40.70531887544228, -74.00976419448853, 15]; // NYC
+    var map_start_location = [37.8090, -122.2220, 12]; // Oakland
 
     /*** URL parsing ***/
 
@@ -29,7 +29,7 @@ map = (function () {
     }
 
     // determine the scene url and content to load during start-up
-    var scene_url = 'scene.yaml';
+    var scene_url = 'styles/elevation-tiles.yaml';
 
     // If there is a query, use it as the scene_url
     var query = parseQuery(window.location.search.slice(1));
