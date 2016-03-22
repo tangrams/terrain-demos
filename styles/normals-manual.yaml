@@ -5,7 +5,7 @@
     elevation:
         type: Raster
         url: https://terrain-preview.mapzen.com/terrarium/{z}/{x}/{y}.png
-        max_zoom: 13
+        max_zoom: 14
 
 styles: 
     hillshade:
@@ -33,13 +33,14 @@ styles:
                     float h12 = unpack(texture2D(u_raster_texture, vec2(v_texcoord + off.yz)));
 
                     // center/right + center/up kernel (sharper)
-                    vec3 va = normalize(vec3(off.z, 0.0, h21 - h11));
-                    vec3 vb = normalize(vec3(0.0, off.z, h12 - h11));
+                    // vec3 va = normalize(vec3(off.z, 0.0, h21 - h11));
+                    // vec3 vb = normalize(vec3(0.0, off.z, h12 - h11));
                     // left/right + up/down kernel (softer)
-                    // vec3 va = normalize(vec3(off.xy*-2.,h21-h01));
-                    // vec3 vb = normalize(vec3(off.yx*-2.,h12-h10));
+                    vec3 va = normalize(vec3(off.xy*-2.,h21-h01));
+                    vec3 vb = normalize(vec3(off.yx*-2.,h12-h10));
 
                     normal = normalize(cross(va, vb));
+                    normal *= 4.; // boost
 
                 color: |
                     color.rgb = normal /2. + .5;
