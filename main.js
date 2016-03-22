@@ -39,8 +39,16 @@ map = (function () {
 
     /*** Map ***/
 
-    var map = L.map('map',
-        {"keyboardZoomOffset" : .05}
+    var southWest = L.latLng(31.95, -126.23),
+        northEast = L.latLng(44.09, -112.76),
+        bounds = L.latLngBounds(southWest, northEast);
+
+    var map = L.map('map', {
+        "keyboardZoomOffset" : .05,
+        "minZoom" : 9,
+        "maxZoom" : 16,
+        "maxBounds" : bounds
+        }
     );
 
     var layer = Tangram.leafletLayer({
