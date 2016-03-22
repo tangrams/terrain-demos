@@ -8,7 +8,7 @@ sources:
     normals:
         type: Raster
         url: https://terrain-preview.mapzen.com/terrarium/{z}/{x}/{y}.png
-        max_zoom: 14
+        max_zoom: 15
 
 styles: 
     hillshade:
