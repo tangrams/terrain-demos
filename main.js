@@ -37,14 +37,6 @@ map = (function () {
         scene_url = query.url;
     }
     /*** Map ***/
-    var elevationStyles = [ "styles/elevation-tiles.yaml",
-                            "styles/contours.yaml",
-                            "styles/elevation-tiles.yaml",
-                            "styles/grayscale.yaml",
-                            "styles/hypsometric.yaml",
-                            "styles/normals-manual.yaml"];
-    // normal tiles currently have wider zoom range
-    var minZoom = (elevationStyles.indexOf(scene_url) > -1) ? 10 : 8;
 
     var southWest = L.latLng(31.95, -126.23),
         northEast = L.latLng(44.09, -112.76),
@@ -52,7 +44,7 @@ map = (function () {
 
     var map = L.map('map', {
         "keyboardZoomOffset" : .05,
-        "minZoom" : minZoom,
+        "minZoom" : 8,
         "maxZoom" : 16,
         "maxBounds" : bounds
         }
