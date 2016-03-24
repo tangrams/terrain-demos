@@ -55,11 +55,11 @@
     <script>
         MPZN.bug();
         var cs = document.getElementById("mz-citysearch");
-        cs.style.display = "none";
+        if (typeof cs != "undefined") cs.style.display = "none";
         var gl = document.getElementById("mz-geolocator");
-        gl.style.display = "none";
+        if (typeof gl != "undefined") gl.style.display = "none";
         var lc = document.getElementsByClassName("leaflet-top leaflet-left")[0];
-        lc.style.top = "0px";
+        if (typeof lc != "undefined") lc.style.top = "0px";
     </script>
 
   </body>
