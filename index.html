@@ -55,9 +55,9 @@
     <script>
         MPZN.bug();
         var cs = document.getElementById("mz-citysearch");
-        if (typeof cs != "undefined") cs.style.display = "none";
+        if (typeof cs != "undefined") cs.parentNode.removeChild(cs);
         var gl = document.getElementById("mz-geolocator");
-        if (typeof gl != "undefined") gl.style.display = "none";
+        if (typeof gl != "undefined") gl.parentNode.removeChild(gl);
         var lc = document.getElementsByClassName("leaflet-top leaflet-left")[0];
         if (typeof lc != "undefined") lc.style.top = "0px";
     </script>
