@@ -1,6 +1,8 @@
 # terrain-demos
 
-Ways to manipulate heightmap data in [Tangram](http://github.com/tangrams/tangram)
+Ways to manipulate heightmap data in [Tangram](http://github.com/tangrams/tangram) as seen in [Mapping Mountains](https://mapzen.com/blog/mapping-mountains/)
+
+<img width="664" alt="terrain demo" src="https://cloud.githubusercontent.com/assets/459970/14753849/e36167ae-08a5-11e6-9abb-3e219a3bc20f.png">
 
 ## Style gallery
 
@@ -32,4 +34,4 @@ If that doesn't work, try:
 
     python -m http.server 8000
     
-Then navigate to: [http://localhost:8000](http://localhost:8000)
+Then navigate to, eg: [http://localhost:8000/?url=styles/contours.yaml](http://localhost:8000/?url=styles/contours.yaml)
