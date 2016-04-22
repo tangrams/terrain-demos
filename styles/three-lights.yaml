@@ -25,7 +25,7 @@ lights:
 styles:
     hillshade:
         base: raster
-        apply: normal
+        raster: normal
         shaders: 
             blocks:
                 color: |

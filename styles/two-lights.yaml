@@ -21,7 +21,7 @@ lights:
 styles: 
     hillshade:
         base: raster
-        apply: normal
+        raster: normal
 
 layers:
     terrain:
