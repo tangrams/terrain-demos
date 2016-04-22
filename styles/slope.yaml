@@ -12,17 +12,18 @@ lights:
     light2:
         type: directional
         direction: [0,0,-1]
-        diffuse: [1.000, 1.000, 1.000]
+        diffuse: 1.
 
 styles: 
     hillshade:
         base: raster
-        apply: false
+        raster: normal
         shaders:
+            uniforms:
+                mult: 8
             blocks:
                 normal: |
-                    float mult = 15.;
-                    normal = raster.rgb * mult - (mult - 1.);
+                    normal = normal * mult - (mult - 1.);
 
 layers:
     terrain:
@@ -30,6 +31,7 @@ layers:
         draw:
             hillshade:
                 order: 0
+                color: white
 
     earth:
         data: { source: osm }

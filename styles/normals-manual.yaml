@@ -11,6 +11,7 @@
 styles: 
     hillshade:
         base: raster
+        texcoords: true
         shaders: 
             blocks:
                 global: |
@@ -22,29 +23,28 @@ styles:
                     // adapted from
                     // http://stackoverflow.com/questions/5281261/generating-a-normal-map-from-a-height-map
                     // http://stackoverflow.com/questions/15178225/normal-map-from-height-map-artifact
-                    float px = 1. / 256.;
+                    float px = 1.;
                     vec3 off = vec3(-px, 0, px);
 
                     // Sample heightmap at center, left, right, above, below
-                    float h11 = unpack(texture2D(u_raster_texture, v_texcoord));
+                    float h11 = unpack(color);
                     float height = h11;
-                    float h01 = unpack(texture2D(u_raster_texture, vec2(v_texcoord + off.xy)));
-                    float h21 = unpack(texture2D(u_raster_texture, vec2(v_texcoord + off.zy)));
-                    float h10 = unpack(texture2D(u_raster_texture, vec2(v_texcoord + off.yx)));
-                    float h12 = unpack(texture2D(u_raster_texture, vec2(v_texcoord + off.yz)));
+                    float h01 = unpack(sampleRasterAtPixel(0, vec2(currentRasterPixel(0) + off.xy)));
+                    float h21 = unpack(sampleRasterAtPixel(0, vec2(currentRasterPixel(0) + off.zy)));
+                    float h10 = unpack(sampleRasterAtPixel(0, vec2(currentRasterPixel(0) + off.yx)));
+                    float h12 = unpack(sampleRasterAtPixel(0, vec2(currentRasterPixel(0) + off.yz)));
 
                     // center/right + center/up kernel (sharper)
-                    // vec3 va = normalize(vec3(off.z, 0.0, h21 - h11));
-                    // vec3 vb = normalize(vec3(0.0, off.z, h12 - h11));
+                    // vec3 va = normalize(vec3(off.z/4./rasterPixelSize(0).x, 0.0, h21 - h11));
+                    // vec3 vb = normalize(vec3(0.0, off.z/4./rasterPixelSize(0).x, h12 - h11));
                     // left/right + up/down kernel (softer)
-                    vec3 va = normalize(vec3(off.xy*-2.,h21-h01));
-                    vec3 vb = normalize(vec3(off.yx*-2.,h12-h10));
+                    vec3 va = normalize(vec3(off.xy/-2./rasterPixelSize(0),h21-h01));
+                    vec3 vb = normalize(vec3(off.yx/-2./rasterPixelSize(0),h12-h10));
 
                     normal = normalize(cross(va, vb));
-                    normal *= 4.; // boost
 
                 color: |
-                    color.rgb = normal /2. + .5;
+                    color.rgb = normal / 2. + .5;
 
 layers:
     terrain:

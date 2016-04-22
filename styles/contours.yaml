@@ -14,6 +14,7 @@ sources:
 styles: 
     hillshade:
         base: raster
+        texcoords: true
         shaders:
             blocks:
                 global: |
@@ -25,26 +26,26 @@ styles:
                     // adapted from
                     // http://stackoverflow.com/questions/5281261/generating-a-normal-map-from-a-height-map
                     // http://stackoverflow.com/questions/15178225/normal-map-from-height-map-artifact
-                    float px = 1. / 256.;
+                    float px = 1.;
                     vec3 off = vec3(-px, 0, px);
 
                     float h = unpack(color);
 
                     // Sample heightmap at center, left, right, above, below
-                    float h01 = unpack(texture2D(u_raster_texture, vec2(v_texcoord + off.xy)));
-                    float h21 = unpack(texture2D(u_raster_texture, vec2(v_texcoord + off.zy)));
-                    float h10 = unpack(texture2D(u_raster_texture, vec2(v_texcoord + off.yx)));
-                    float h12 = unpack(texture2D(u_raster_texture, vec2(v_texcoord + off.yz)));
+                    float h01 = unpack(sampleRasterAtPixel(0, vec2(currentRasterPixel(0) + off.xy)));
+                    float h21 = unpack(sampleRasterAtPixel(0, vec2(currentRasterPixel(0) + off.zy)));
+                    float h10 = unpack(sampleRasterAtPixel(0, vec2(currentRasterPixel(0) + off.yx)));
+                    float h12 = unpack(sampleRasterAtPixel(0, vec2(currentRasterPixel(0) + off.yz)));
 
                     // left/right + up/down kernel (softer)
-                    vec3 va = normalize(vec3(off.xy*-2.,h21-h01));
-                    vec3 vb = normalize(vec3(off.yx*-2.,h12-h10));
+                    vec3 va = normalize(vec3(off.xy/-2./rasterPixelSize(0),h21-h01));
+                    vec3 vb = normalize(vec3(off.yx/-2./rasterPixelSize(0),h12-h10));
 
                     normal = normalize(cross(va, vb));
 
                     // adjust width of line based on normals to produce thinner line on flatter surfaces
                     float adj = (1. / normal.z) * 1. - .9999;
-                    float w = 20. * adj * (1.5 - fract(u_map_position.z));
+                    float w = 1.5 * adj * (1.5 - fract(u_map_position.z));
                     float val = fract(h  * (250. * (1. + fract(u_time * .001))));
                     float triangle = abs(1. * val - 1.0);
                     float square = smoothstep(.0, w, triangle);
@@ -56,9 +57,6 @@ styles:
                     square = smoothstep(.0, w, triangle);
                     square *= smoothstep(w, w+w, val);
                     color.rgb *= vec3(square);
-
-
-                    color.a = 1.0;
 
 layers:
     terrain:
