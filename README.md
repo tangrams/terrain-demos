@@ -1,6 +1,6 @@
 # terrain-demos
 
-Ways to manipulate heightmap data in [Tangram](http://github.com/tangrams/tangram) as seen in [Mapping Mountains](https://mapzen.com/blog/mapping-mountains/)
+Ways to manipulate heightmap data in [Tangram](http://github.com/tangrams/tangram) as seen in the [Mapping Mountains](https://mapzen.com/blog/mapping-mountains/) post on the [Mapzen blog](http://mapzen.com/blog).
 
 <img width="664" alt="terrain demo" src="https://cloud.githubusercontent.com/assets/459970/14753849/e36167ae-08a5-11e6-9abb-3e219a3bc20f.png">
 
