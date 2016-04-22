@@ -24,6 +24,8 @@ Ways to manipulate heightmap data in [Tangram](http://github.com/tangrams/tangra
 - sunset spheremap: http://tangrams.github.io/terrain-demos/?url=styles/sunset.yaml
 - swiss style: http://tangrams.github.io/terrain-demos/?url=styles/imhof.yaml
 
+Check out the source code inside the scene files in the [styles directory](https://github.com/tangrams/terrain-demos/tree/gh-pages/styles)!
+
 ### To run locally:
 
 Start a web server in the repo's directory:
