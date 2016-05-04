@@ -38,15 +38,10 @@ map = (function () {
     }
     /*** Map ***/
 
-    var southWest = L.latLng(31.95, -126.23),
-        northEast = L.latLng(44.09, -112.76),
-        bounds = L.latLngBounds(southWest, northEast);
-
     var map = L.map('map', {
-        "keyboardZoomOffset" : .05,
-        "minZoom" : 8,
+        "keyboardZoomOffset" : 1.,
+        "minZoom" : 2,
         "maxZoom" : 16,
-        "maxBounds" : bounds
         }
     );
 
