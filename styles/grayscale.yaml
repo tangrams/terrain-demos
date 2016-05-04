@@ -3,7 +3,7 @@ sources:
         type: TopoJSON
         url: https://vector.mapzen.com/osm/all/{z}/{x}/{y}.topojson?api_key=vector-tiles-JUsa0Gc
         max_zoom: 16
-    normals:
+    elevation:
         type: Raster
         url: https://terrain-preview.mapzen.com/terrarium/{z}/{x}/{y}.png
         max_zoom: 15
@@ -31,7 +31,7 @@ styles:
 
 layers:
     terrain:
-        data: { source: normals, layer: _default }
+        data: { source: elevation, layer: _default }
         draw:
             hillshade:
                 order: 0

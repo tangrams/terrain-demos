@@ -6,7 +6,7 @@
     normals:
         type: Raster
         url: https://terrain-preview.mapzen.com/normal/{z}/{x}/{y}.png
-        max_zoom: 15
+        max_zoom: 14
 
 styles: 
     terrain-envmap:
