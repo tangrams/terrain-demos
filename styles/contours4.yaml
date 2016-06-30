@@ -1,0 +1,94 @@
+scene:
+    animated: false
+    background:
+        color: white
+
+sources:
+    osm: 
+        type: TopoJSON
+        url: https://vector.mapzen.com/osm/all/{z}/{x}/{y}.topojson
+        max_zoom: 16
+        rasters: [heightmap, normals]
+    heightmap:
+        type: Raster
+        url: https://terrain-preview.mapzen.com/terrarium/{z}/{x}/{y}.png
+        max_zoom: 15
+        rasters: [normals]
+    normals:
+        type: Raster
+        url: https://terrain-preview.mapzen.com/normal/{z}/{x}/{y}.png
+        max_zoom: 15
+
+styles: 
+    hillshade:
+        base: raster
+        # texcoords: true
+        raster: custom
+        shaders:
+            blocks:
+                global: |
+                    float unpack(vec4 h) {
+                        return (h.r * 1. + h.g / 256. + h.b / 65536.);
+                    }
+                color: |
+
+                    float h = unpack(sampleRaster(0));
+                    vec3 normals = normalize(sampleRaster(1).xyz * 2. - 1.);
+
+                    // adjust width of line based on normals to produce thinner line on flatter surfaces
+                    float adj = (1. / normals.z) - 1.;
+                    // width
+                    float w = 10000. * pow(.5, u_map_position.z / 1.) * adj;
+                    // float w = .05;
+                    // spacing
+                    // float val = fract(h  * 100000. / pow(20. - u_map_position.z, 2.));
+                    // float val = fract(h  * 40000. / pow(20. - u_tile_origin.z, 2.));
+                    float zoom_power = 20. - u_tile_origin.z;
+                    float power = pow(2., zoom_power);
+                    // float scale = 100000. * pow(1.5, u_tile_origin.z);
+                    float scale = 100000.;
+                    float val = fract(h  * scale / power);
+                    // val = fract(h  * scale / pow(2., 20. - u_map_position.z));
+                    float triangle = abs(1. * val - 1.0);
+                    float square = smoothstep(.0, w, triangle);
+                    square *= smoothstep(w, w+w, val);
+                    color.rgb = vec3(square) + vec3(.8);
+
+                    // val = fract(h  * 10000.);
+                    // triangle = abs(1. * val - 1.0);
+                    // square = smoothstep(.0, w, triangle);
+                    // square *= smoothstep(w, w+w, val);
+                    // color.rgb *= vec3(square);
+                    // // color = vec4(h, h, h, 1);
+                    color.a = 1.;
+                    // color.rgb = normals;
+
+layers:
+    # terrain:
+    #     data: { source: heightmap, layer: _default }
+    #     draw:
+    #         hillshade:
+    #             order: 0
+
+    earth:
+        data: { source: osm }
+        draw:
+            lines: 
+                order: 2
+                color: [.3, .3, .3]
+                width: 1px
+            hillshade:
+                order: 1
+    water:
+        data: { source: osm }
+        filter: { kind: [lakes] }
+        draw:
+            polygons:
+                order: 4
+                color: white
+        outlines:
+            draw:
+                lines:
+                    order: 6
+                    color: red
+                    width: 2px
