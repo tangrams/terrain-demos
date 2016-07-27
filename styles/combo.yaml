@@ -1,0 +1,63 @@
+sources:
+    osm: 
+        type: TopoJSON
+        url: https://vector.mapzen.com/osm/all/{z}/{x}/{y}.topojson?api_key=vector-tiles-JUsa0Gc
+        max_zoom: 16
+    normals:
+        type: Raster
+        url: https://terrain-preview.mapzen.com/normal/{z}/{x}/{y}.png
+        max_zoom: 15
+        rasters: [elevation]
+    elevation:
+        type: Raster
+        url: https://terrain-preview.mapzen.com/terrarium/{z}/{x}/{y}.png
+        max_zoom: 15
+
+lights:
+    light2:
+        type: directional
+        direction: [0,0,-1]
+        diffuse: 1.
+
+styles: 
+    hillshade:
+        base: raster
+        raster: custom
+        shaders:
+            uniforms:
+                mult: 8
+            blocks:
+                normal: |
+                    normal = sampleRaster(0).rgb * mult - (mult - 1.);
+                color: |
+                    color.rgb = 1.0 - sampleRaster(0).aaa;
+                    color.rgb = color.rgb * 10.;
+                    color.a = 1.0;
+
+
+layers:
+    terrain:
+        data: { source: normals, layer: _default }
+        draw:
+            hillshade:
+                order: 0
+                color: white
+
+    earth:
+        data: { source: osm }
+        draw:
+            lines: 
+                order: 2
+                color: [.3, .3, .3]
+                width: 1px
+
+    places:
+        data: { source: osm}
+        filter: 
+            kind: [city]
+        draw:
+            text:
+                font:
+                    fill: white
+                    size: 16px
+                    stroke: { color: '#444', width: 4px}
