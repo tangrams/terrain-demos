@@ -11,6 +11,7 @@ sources:
 styles: 
     terrain-envmap:
         base: raster
+        lighting: false
         raster: normal
         shaders:
             uniforms:

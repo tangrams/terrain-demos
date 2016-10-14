@@ -11,6 +11,7 @@
 styles: 
     hillshade:
         base: raster
+        lighting: false
 
 layers:
     terrain:

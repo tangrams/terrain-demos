@@ -14,6 +14,7 @@ sources:
 styles: 
     hillshade:
         base: raster
+        lighting: false
         texcoords: true
         shaders:
             blocks:

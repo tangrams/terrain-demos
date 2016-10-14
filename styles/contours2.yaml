@@ -22,6 +22,7 @@ sources:
 styles: 
     hillshade:
         base: raster
+        lighting: false
         # texcoords: true
         raster: custom
         shaders:
