@@ -42,7 +42,7 @@ layers:
 
     water:
         data: { source: osm }
-        filter: {boundary: true}
+        filter: {boundary: true, kind: ocean}
         draw:
             lines: 
                 order: 2
