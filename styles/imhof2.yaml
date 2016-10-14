@@ -3,6 +3,7 @@ sources:
         type: TopoJSON
         url: https://tile.mapzen.com/mapzen/vector/v1/all/{z}/{x}/{y}.topojson?api_key=mapzen-QF1osLn
         max_zoom: 16
+        rasters: [normals]
     normals:
         type: Raster
         url: https://terrain-preview.mapzen.com/normal/{z}/{x}/{y}.png
@@ -42,22 +43,18 @@ styles:
         base: text
         blend: overlay
     fadepolys:
-        base: polygons
-        blend: add
+        base: raster
+        mix: terrain-envmap
+        shaders:
+            blocks:
+                color: |                    
+                    color *= vec4(1.2);
 layers:
     terrain:
         data: { source: normals, layer: _default }
         draw:
             terrain-envmap:
                 order: 0
-
-    earth:
-        data: { source: osm }
-        draw:
-            lines: 
-                order: 2
-                color: [.3, .3, .3]
-                width: 1px
 
     places:
         data: { source: osm}
@@ -77,14 +74,19 @@ layers:
                 width: 1px
     water:
         data: { source: osm }
+        lines:
+            filter: {boundary: true}
+            draw:
+                lines:
+                    order: 5
+                    color: [.3, .3, .3]
+                    width: .3px
+    water-terrain:
+        data: { source: osm, layer: water }
         draw:
             fadepolys:
                 order: 4
-                color: [.3, .3, .3]
-            lines:
-                order: 3
-                color: [.3, .3, .3]
-                width: .3px
+
     roads:
         data: { source: osm }
         draw:

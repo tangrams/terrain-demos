@@ -23,8 +23,9 @@ layers:
             hillshade:
                 order: 0
 
-    earth:
+    water:
         data: { source: osm }
+        filter: {boundary: true}
         draw:
             lines: 
                 order: 2
