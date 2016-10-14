@@ -6,7 +6,7 @@ scene:
 sources:
     osm: 
         type: TopoJSON
-        url: https://vector.mapzen.com/osm/all/{z}/{x}/{y}.topojson
+        url: https://tile.mapzen.com/mapzen/vector/v1/all/{z}/{x}/{y}.topojson?api_key=mapzen-QF1osLn
         max_zoom: 16
         rasters: [heightmap, normals]
     heightmap:
@@ -22,6 +22,7 @@ sources:
 styles: 
     hillshade:
         base: raster
+        lighting: false
         # texcoords: true
         raster: custom
         shaders:
@@ -73,16 +74,16 @@ layers:
     earth:
         data: { source: osm }
         draw:
-            lines: 
-                order: 2
-                color: [.3, .3, .3]
-                width: 1px
             hillshade:
                 order: 1
     water:
         data: { source: osm }
-        filter: { kind: [lakes] }
+        filter: { kind: [lakes], boundary: true }
         draw:
+            lines: 
+                order: 2
+                color: [.3, .3, .3]
+                width: 1px
             polygons:
                 order: 4
                 color: white
