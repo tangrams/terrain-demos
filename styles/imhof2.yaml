@@ -1,0 +1,162 @@
+sources:
+    osm: 
+        type: TopoJSON
+        url: https://tile.mapzen.com/mapzen/vector/v1/all/{z}/{x}/{y}.topojson?api_key=mapzen-QF1osLn
+        max_zoom: 16
+    normals:
+        type: Raster
+        url: https://terrain-preview.mapzen.com/normal/{z}/{x}/{y}.png
+        max_zoom: 15
+
+styles:
+    terrain-envmap:
+        base: raster
+        raster: normal
+        lighting: false
+        shaders:
+            uniforms:
+                u_scale: .15
+                u_envmap: http://crossorigin.me/https://github.com/tangrams/terrain-demos/raw/gh-pages/img/imhof5.jpg
+            blocks:
+                global: |
+                    // Simplified view-independent environment map
+                    vec4 applyEnvmap (in sampler2D _tex, in vec3 _normal) {
+                        const vec3 eye = vec3(0.,0.,-1.);
+                        vec3 r = reflect(eye, _normal);
+                        r.z += 1.0;
+                        float m = 2. * length(r);
+                        vec2 uv = r.xy / m + .5;
+                        return texture2D(_tex, uv);
+                    }
+                color: |                    
+                    normal.z *= u_scale;
+                    normal = normalize(normal);
+                    color = applyEnvmap(u_envmap, normal);
+    dots:
+        base: lines
+        dash: [1, 2]
+    fadelines:
+        base: lines
+        blend: multiply
+    fadetext:
+        base: text
+        blend: overlay
+    fadepolys:
+        base: polygons
+        blend: add
+layers:
+    terrain:
+        data: { source: normals, layer: _default }
+        draw:
+            terrain-envmap:
+                order: 0
+
+    earth:
+        data: { source: osm }
+        draw:
+            lines: 
+                order: 2
+                color: [.3, .3, .3]
+                width: 1px
+
+    places:
+        data: { source: osm}
+        filter: 
+            kind: [city]
+        draw:
+            text:
+                font:
+                    fill: white
+                    size: 16px
+                    stroke: { color: '#444', width: 4px}
+    boundaries:
+        data: { source: osm }
+        draw:
+            dots:
+                color: [.75, .75, .75]
+                width: 1px
+    water:
+        data: { source: osm }
+        draw:
+            fadepolys:
+                order: 4
+                color: [.3, .3, .3]
+            lines:
+                order: 3
+                color: [.3, .3, .3]
+                width: .3px
+    roads:
+        data: { source: osm }
+        draw:
+            fadelines:
+                order: 3
+                color: [[10, [.9, .9, .9]], [18, white]]
+                width: [[13, 1.5px], [15, 5]]
+        labels:
+            filter: {$zoom: {min: 10}}
+            draw:
+                fadetext:
+                    buffer: 10px
+                    font:
+                        size: function() {return 30 - (20 - $zoom)}
+                        family: Lucida Grande
+                        fill: function() {return [1, 1, 1, $zoom/15.];}
+                        stroke:
+                            color: function() {return [0, 0, 0, $zoom/15.];}
+                            width: 1px
+    places:
+        data: { source: osm }
+        filter: { not: { kind: [neighbourhood] } }
+        countries:
+            filter: { kind: country }
+            draw:
+                text:
+                    font:
+                        transform: uppercase
+                        size: function() {return 40 - feature.scalerank * 2 - (20 - $zoom) }
+                        family: Lucida Grande
+                        fill: white
+                        stroke:
+                            color: black
+                            width: 2px
+        cities:
+            filter: { not: { kind: [country, state] } }
+            also:
+                filter:
+                    any:
+                        - $zoom: { min: 6, max: 8 }
+                        - { labelrank: {min: 5}, $zoom: { max: 6 }}
+                        - { population: { min: 100000 } , $zoom: {min: 8 } }
+                        - { population: { min: 50000 } , $zoom: {min: 12 } }
+                draw:
+                    text:
+                        optional: false
+                        font:
+                            size: function() {return 30 - feature.scalerank * 1 - (10 - $zoom)}
+                            family: Lucida Grande
+                            fill: white
+                            stroke:
+                                color: black
+                                width: 2px
+        states:
+            filter:
+                - kind: state
+                  $zoom: { min: 6 }
+            draw:
+                text:
+                    priority: 3
+                    font:
+                        transform: uppercase
+                        size: function() {return 40 - feature.scalerank * 2 - (20 - $zoom) }
+                        family: Lucida Grande
+                        fill: white
+                        stroke:
+                            color: black
+                            width: 2px
+    buildings:
+        data: {source: osm}
+        draw:
+            fadelines:
+                order: 10
+                color: [.95, .95, .95]
+                width: 2px
