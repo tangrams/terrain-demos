@@ -21,7 +21,7 @@ styles:
 
                 color: |
                     //declare stuff
-                    const int mSize = 1;
+                    const int mSize = 11;
                     const int kSize = (mSize-1)/2;
                     float kernel[mSize];
                     vec3 final_colour = vec3(0.0);
@@ -41,7 +41,7 @@ styles:
                     //read out the texels
                     for (int i=-kSize; i <= kSize; ++i) {
                         for (int j=-kSize; j <= kSize; ++j) {
-                            final_colour += kernel[kSize+j]*kernel[kSize+i]*sampleRasterAtPixel(0, vec2(gl_FragCoord.xy + vec2(float(i),float(j)))).rgb;
+                            final_colour += kernel[kSize+j]*kernel[kSize+i]*sampleRasterAtPixel(0, vec2(currentRasterPixel(0) + vec2(float(i),float(j)))).rgb;
                         }
                     }
 
