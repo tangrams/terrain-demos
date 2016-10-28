@@ -10,7 +10,6 @@ float normpdf(in float x, in float sigma)
 
 void mainImage( out vec4 fragColor, in vec2 fragCoord )
 {
-	vec3 c = texture2D(iChannel0, fragCoord.xy / iResolution.xy).rgb;	
 	//declare stuff
 	const int mSize = 11;
 	const int kSize = (mSize-1)/2;
@@ -39,7 +38,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
 			final_colour += kernel[kSize+j]*kernel[kSize+i]*texture2D(iChannel0, (fragCoord.xy+vec2(float(i),float(j))) / iResolution.xy).rgb;
 
 		}
-	}	
-	
+	}
+
 	fragColor = vec4(final_colour/(Z*Z), 1.0);
 }
