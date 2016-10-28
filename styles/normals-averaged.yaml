@@ -46,7 +46,6 @@ styles:
                     }
 
                     color = vec4(final_colour/(Z*Z), 1.0);
-                    color.a = 1.0;
 
 layers:
     terrain:
