@@ -18,6 +18,7 @@ lights:
 styles: 
     hillshade:
         base: raster
+        # lighting: false
         raster: normal
         shaders:
             blocks:
@@ -28,13 +29,13 @@ styles:
 
                 normal: |
                     //declare stuff
-                    const int mSize = 17;
+                    const int mSize = 17; // kernel diameter
                     const int kSize = (mSize-1)/2;
                     float kernel[mSize];
                     vec3 final_colour = vec3(0.0);
 
                     //create the 1-D kernel
-                    float sigma = 7.0;
+                    float sigma = 5.;
                     float Z = 0.0;
                     for (int j = 0; j <= kSize; ++j) {
                         kernel[kSize+j] = kernel[kSize-j] = normpdf(float(j), sigma);
@@ -52,14 +53,20 @@ styles:
                         }
                     }
 
-                    // if (dot(final_colour, normal) < 0.24) {
-                    // normal = vec3(final_colour/(Z*Z));
-                    // normal = vec3(final_colour * (1.-dot(final_colour, normal))/(Z*Z) );
-                    // normal = vec3(final_colour/(Z*Z) * 1.-dot(final_colour, normal));
-                    // }
-                    // normal = vec3(final_colour/(Z*Z) ) * ( 1. - dot(final_colour, normal));
-                    normal = vec3(final_colour/(Z*Z) ) *dot(final_colour, normal);
-                    normal.z *= 1./((.05 * float(mSize) - .23));
+                    vec3 final = final_colour/(Z*Z); // blurred normals
+                    final = final * 2. - 1.;
+
+                    float factor = 25000./pow(2., u_tile_origin.z);
+
+                    // this version uses the slope to control the mix.
+                    vec3 slope = vec3(dot(vec3(0., 0., 1.), normal)); // slopemap
+                    slope = slope * factor - factor + 1.;
+                    slope = clamp(slope, 0., 1.);
+
+                    normal = mix(final, normal, 1. - slope);
+                    // normal = slope;
+                color: |
+                    // color.rgb = normal / 2. + .5;
 
 layers:
     terrain:
