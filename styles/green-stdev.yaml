@@ -18,58 +18,49 @@ lights:
 styles: 
     hillshade:
         base: raster
-        # lighting: false
         raster: normal
         shaders:
             blocks:
-                global: |
-                    float normpdf(in float x, in float sigma) {
-                        return 0.39894*exp(-0.5*x*x/(sigma*sigma))/sigma;
-                    }
-
                 normal: |
-                    //declare stuff
-                    const int mSize = 4; // kernel width
+                    // box blur masked with a standard deviation
+                    // adapted from https://www.shadertoy.com/view/XdfGDH
+                    const int mSize = 5; // kernel width
                     const int kSize = (mSize-1)/2;
-                    float kernel[mSize];
-                    vec3 final = vec3(0.0);
 
-                    //read out the texels
+                    // loop over the kernel
+                    vec3 final = vec3(0.0);
                     for (int i=-kSize; i <= kSize; ++i) {
                         for (int j=-kSize; j <= kSize; ++j) {
                             final += sampleRasterAtPixel(0, vec2(currentRasterPixel(0) + vec2(float(i),float(j)))).rgb;
                         }
                     }
+                    // find the mean of the sampled values (a simple box blur)
+                    vec3 mean = final / vec3(mSize*mSize);
 
-                    // find the mean of the samples values
-                    final /= vec3((kSize*2+1)*(kSize*2+1));
-
+                    // loop over the kernel again, summing the squares of (samples - mean)
                     vec3 squares = vec3(0.0);
-
                     for (int i=-kSize; i <= kSize; ++i) {
                         for (int j=-kSize; j <= kSize; ++j) {
-                            squares += (sampleRasterAtPixel(0, vec2(currentRasterPixel(0) + vec2(float(i),float(j)))).rgb - final)*(sampleRasterAtPixel(0, vec2(currentRasterPixel(0) + vec2(float(i),float(j)))).rgb - final);
+                            vec3 sample = sampleRasterAtPixel(0, vec2(currentRasterPixel(0) + vec2(float(i),float(j)))).rgb;
+                            vec3 difference = sample - mean;
+                            squares += difference*difference;
                         }
                     }
-
                     // find the mean of the squares
-                    squares /= vec3((kSize*2+1)*(kSize*2+1));
-                    
-                    // then take the square root of the mean of the squares
+                    squares /= vec3(mSize*mSize);
+                    // take the square root of the mean
+                    vec3 stdev = vec3(sqrt(squares));
+                    // finally, take the magnitude of the vector standard deviation
+                    stdev = vec3(length(stdev));
+                    // scale to taste
+                    stdev *= 8.;
+                    // mix between the blurred and unblurred normals, using stdev as a mask
+                    normal = mix(mean, normal, stdev);
+                    // normalize it
+                    normal = normalize(normal);
 
-                    // hmm, this doesn't look right.
-                    // vec3 stdev = vec3(sqrt(squares));
-
-                    // not sure about this, but it looks better
-                    vec3 stdev = vec3(sqrt(squares.x));
-                    stdev += vec3(sqrt(squares.y));
-                    stdev += vec3(sqrt(squares.z));
-
-                    // this version uses standard deviation to control the mix
-                    vec3 slope = vec3(dot(vec3(0., 0., 1.), normal));
-
-                    // don't know why * 8
-                    normal = mix(final, normal, stdev * 8.);
+                    // debugging - uncomment to see the mask
+                    // normal = stdev;
 
 layers:
     terrain:
