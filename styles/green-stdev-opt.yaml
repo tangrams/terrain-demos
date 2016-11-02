@@ -1,3 +1,4 @@
+# with optimization assistance from Patricio Gonzalez Vivo
 sources:
     osm: 
         type: TopoJSON
