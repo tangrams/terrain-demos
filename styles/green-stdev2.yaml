@@ -28,8 +28,32 @@ styles:
                     }
 
                 normal: |
+                    const int mSize2 = 5; // kernel width
+                    const int kSize2 = (mSize2-1)/2;
+                    vec3 squares = vec3(0.0);
+
+                    for (int i=-kSize2; i <= kSize2; ++i) {
+                        for (int j=-kSize2; j <= kSize2; ++j) {
+                            vec3 sample = sampleRasterAtPixel(0, vec2(currentRasterPixel(0) + vec2(float(i),float(j)))).rgb - normal;
+                            squares += sample*sample;
+                        }
+                    }
+
+                    // find the mean of the squares
+                    squares /= vec3(mSize2*mSize2);
+
+                    // then take the square root of the mean of the squares
+
+                    // hmm, this doesn't look right.
+                    vec3 stdev = vec3(sqrt(squares));
+
+                    // not sure about this, but it looks better
+                    // vec3 stdev = vec3(sqrt(squares.x));
+                    // stdev += vec3(sqrt(squares.y));
+                    // stdev += vec3(sqrt(squares.z));
+            
                     //declare stuff
-                    const int mSize = 7; // kernel width
+                    const int mSize = 3; // kernel width
                     const int kSize = (mSize-1)/2;
                     vec3 final = vec3(0.0);
 
@@ -43,31 +67,13 @@ styles:
                     // find the mean of the sampled values
                     final /= vec3(mSize*mSize);
 
-                    vec3 squares = vec3(0.0);
 
-                    for (int i=-kSize; i <= kSize; ++i) {
-                        for (int j=-kSize; j <= kSize; ++j) {
-                            squares += (sampleRasterAtPixel(0, vec2(currentRasterPixel(0) + vec2(float(i),float(j)))).rgb - final)*(sampleRasterAtPixel(0, vec2(currentRasterPixel(0) + vec2(float(i),float(j)))).rgb - final);
-                        }
-                    }
-
-                    // find the mean of the squares
-                    squares /= vec3(mSize*mSize);
-
-                    // then take the square root of the mean of the squares
-
-                    // hmm, this doesn't look right.
-                    // vec3 stdev = vec3(sqrt(squares));
-
-                    // not sure about this, but it looks better
-                    vec3 stdev = vec3(sqrt(squares.x));
-                    stdev += vec3(sqrt(squares.y));
-                    stdev += vec3(sqrt(squares.z));
 
                     // don't know why * 8
-                    normal = mix(final, normal, stdev * 3.);
+                    normal = mix(final, normal, stdev * 1.);
                     // debugging:
-                    // normal = stdev * 8.;
+                    normal = stdev * .5;
+                    // normal = final * 1.;
 
 layers:
     terrain:
