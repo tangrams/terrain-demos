@@ -1,0 +1,17 @@
+sources:
+    osm: 
+        type: TopoJSON
+        url: https://vector.mapzen.com/osm/all/{z}/{x}/{y}.topojson?api_key=vector-tiles-JUsa0Gc
+        max_zoom: 16
+    normals:
+        type: Raster
+        # url: https://terrain-preview.mapzen.com/normal/{z}/{x}/{y}.png
+        url: https://s3.amazonaws.com/mapzen-terrain-dev-us-east/v0.0.3/normal/{z}/{x}/{y}.png
+        max_zoom: 15
+
+layers:
+    terrain:
+        data: { source: normals, layer: _default }
+        draw:
+            raster:
+                order: 0
