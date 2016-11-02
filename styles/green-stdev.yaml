@@ -60,7 +60,7 @@ styles:
                     normal = normalize(normal);
 
                     // debugging - uncomment to see the mask
-                    // normal = stdev;
+                    normal = stdev;
 
 layers:
     terrain:
