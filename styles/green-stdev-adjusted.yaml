@@ -1,0 +1,81 @@
+sources:
+    osm: 
+        type: TopoJSON
+        url: https://tile.mapzen.com/mapzen/vector/v1/all/{z}/{x}/{y}.topojson?api_key=mapzen-QF1osLn
+        max_zoom: 16
+    normals:
+        type: Raster
+        url: https://terrain-preview.mapzen.com/normal/{z}/{x}/{y}.png
+        max_zoom: 15
+
+lights:
+    directional1:
+        type: directional
+        direction: [0.5,-0.7,-0.5]
+        diffuse: [1, 1.000, 0.75]
+        ambient: [0.2, 0.3, 0.3]
+
+styles: 
+    hillshade:
+        base: raster
+        raster: normal
+        shaders:
+            blocks:
+                normal: |
+                    // box blur masked with a standard deviation
+
+                    // blur adapted from https://www.shadertoy.com/view/XdfGDH
+                    const int mSize = 5; // kernel width
+                    const int kSize = (mSize-1)/2;
+
+                    // this version samples in screen space instead of texture space,
+                    // to minimize the artifacts across zoom boundaries
+                    float fract = clamp(u_map_position.z - u_tile_origin.z, 0., 1.);
+                    float zoom = 1. - fract * .5;
+
+                    // loop over the kernel
+                    vec3 final = vec3(0.0);
+                    for (int i=-kSize; i <= kSize; ++i) {
+                        for (int j=-kSize; j <= kSize; ++j) {
+                            final += sampleRasterAtPixel(0, vec2(currentRasterPixel(0) + vec2(float(i)*zoom,float(j)*zoom))).rgb;
+                        }
+                    }
+                    // find the mean of the sampled values (a simple box blur)
+                    vec3 mean = final / vec3(mSize*mSize);
+
+                    // loop over the kernel again, summing the squares of (samples - mean)
+                    vec3 squares = vec3(0.0);
+                    for (int i=-kSize; i <= kSize; ++i) {
+                        for (int j=-kSize; j <= kSize; ++j) {
+                            vec3 sample = sampleRasterAtPixel(0, vec2(currentRasterPixel(0) + vec2(float(i)*zoom,float(j)*zoom))).rgb;
+                            vec3 difference = sample - mean;
+                            squares += difference*difference;
+                        }
+                    }
+                    // find the mean of the squares
+                    squares /= vec3(mSize*mSize);
+                    // take the square root of the mean
+                    vec3 stdev = vec3(sqrt(squares));
+                    // finally, take the magnitude of the vector standard deviation
+                    stdev = vec3(dot(stdev,stdev));
+                    // scale to taste
+                    
+                    // account for brightness differences across a single zoom level
+                    float scale = 80.;
+                    stdev *= scale - (scale/2. - fract * scale/2.);
+
+                    // mix between the blurred and unblurred normals, using stdev as a mask
+                    normal = mix(mean, normal, stdev); // hide this to see the original
+                    // normalize it
+                    normal = normalize(normal);
+
+                    // debugging
+                    // normal = mean; // unhide this to see the blurred version
+                    // normal = stdev; // unhide this to see the mask
+
+layers:
+    terrain:
+        data: { source: normals, layer: _default }
+        draw:
+            hillshade:
+                order: 0
