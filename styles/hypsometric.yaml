@@ -16,6 +16,8 @@ styles:
             blocks:
                 global: |
                     float unpack(vec4 h) {
+                        // GPU reads each 0-255 channel as range 0-1, right where we want it
+                        // assemble to get height
                         return (h.r * 1. + h.g / 256. + h.b / 65536.);
                     }
                 color: |

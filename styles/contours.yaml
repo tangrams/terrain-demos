@@ -6,7 +6,7 @@ sources:
         type: TopoJSON
         url: https://tile.mapzen.com/mapzen/vector/v1/all/{z}/{x}/{y}.topojson?api_key=mapzen-QF1osLn
         max_zoom: 16
-    normals:
+    elevation:
         type: Raster
         url: https://terrain-preview.mapzen.com/terrarium/{z}/{x}/{y}.png
         max_zoom: 15
@@ -20,6 +20,8 @@ styles:
             blocks:
                 global: |
                     float unpack(vec4 h) {
+                        // GPU reads each 0-255 channel as range 0-1, right where we want it
+                        // assemble to get height
                         return (h.r * 1. + h.g / 256. + h.b / 65536.);
                     }
                 color: |
@@ -61,7 +63,7 @@ styles:
 
 layers:
     terrain:
-        data: { source: normals, layer: _default }
+        data: { source: elevation, layer: _default }
         draw:
             hillshade:
                 order: 0
