@@ -1,0 +1,90 @@
+sources:
+    normals:
+        type: Raster
+        url: https://terrain-preview.mapzen.com/normal/{z}/{x}/{y}.png
+        max_zoom: 15
+
+lights:
+    directional1:
+        type: directional
+        direction: [0.5,-0.7,-0.5]
+        diffuse: [1, 1.000, 0.75]
+        ambient: [0.2, 0.3, 0.3]
+
+styles: 
+    hillshade:
+        base: raster
+        lighting: false
+        raster: normal
+        shaders:
+            defines:
+                SORT_SIZE: int(8)
+                SWAP(sort,a,b): t = max(sort[a],sort[b]); sort[a] = min(sort[a],sort[b]); sort[b] = t;
+
+                SORT8: SWAP(sort,0, 1);  SWAP(sort,2, 3); SWAP(sort,0, 2); SWAP(sort,1, 3); SWAP(sort,1, 2); SWAP(sort,4, 5); SWAP(sort,6, 7); SWAP(sort,4, 6); SWAP(sort,5, 7); SWAP(sort,5, 6); SWAP(sort,0, 4); SWAP(sort,1, 5); SWAP(sort,1, 4); SWAP(sort,2, 6); SWAP(sort,3, 7); SWAP(sort,3, 6); SWAP(sort,2, 4); SWAP(sort,3, 5); SWAP(sort,3, 4);
+
+                SORT16: SWAP(sort,0, 1); SWAP(sort,2, 3); SWAP(sort,4, 5); SWAP(sort,6, 7); SWAP(sort,8, 9); SWAP(sort,10, 11); SWAP(sort,12, 13); SWAP(sort,14, 15); SWAP(sort,0, 2); SWAP(sort,4, 6); SWAP(sort,8, 10); SWAP(sort,12, 14); SWAP(sort,1, 3); SWAP(sort,5, 7); SWAP(sort,9, 11); SWAP(sort,13, 15); SWAP(sort,0, 4); SWAP(sort,8, 12); SWAP(sort,1, 5); SWAP(sort,9, 13); SWAP(sort,2, 6); SWAP(sort,10, 14); SWAP(sort,3, 7); SWAP(sort,11, 15); SWAP(sort,0, 8); SWAP(sort,1, 9); SWAP(sort,2, 10); SWAP(sort,3, 11); SWAP(sort,4, 12); SWAP(sort,5, 13); SWAP(sort,6, 14); SWAP(sort,7, 15); SWAP(sort,5, 10); SWAP(sort,6, 9); SWAP(sort,3, 12); SWAP(sort,13, 14); SWAP(sort,7, 11); SWAP(sort,1, 2); SWAP(sort,4, 8); SWAP(sort,1, 4); SWAP(sort,7, 13); SWAP(sort,2, 8); SWAP(sort,11, 14); SWAP(sort,2, 4); SWAP(sort,5, 6); SWAP(sort,9, 10); SWAP(sort,11, 13); SWAP(sort,3, 8); SWAP(sort,7, 12); SWAP(sort,6, 8); SWAP(sort,10, 12); SWAP(sort,3, 5); SWAP(sort,7, 9); SWAP(sort,3, 4); SWAP(sort,5, 6); SWAP(sort,7, 8); SWAP(sort,9, 10); SWAP(sort,11, 12); SWAP(sort,6, 7); SWAP(sort,8, 9);
+
+            blocks:
+                global: |
+                    float t;
+                    float sort[SORT_SIZE];
+                    float quant(float x) {
+                        x = clamp(x,0.,1.);
+                        return floor(x*255.);
+                    }
+                    // pack a vec3 into a scalar for sorting
+                    float pack(vec3 c) {   
+                        float lum = (c.x+c.y+c.z)*(1./3.);
+                        // sort by pseudo-luminance – put that in MSB and quantize everything to 8 bit
+                        // since floats represent 24 bit ints you get 3 channels and only have to sort a scalar value
+                        return quant(c.x) + quant(c.y)*256. + quant(lum) * 65536.;
+                    }
+                    // unpack a scalar back into a vec3
+                    vec3 unpack(float x) {
+                        float lum = floor(x * (1./65536.)) * (1./255.);
+                        vec3 c;
+                        c.x = floor(mod(x,256.)) * (1./255.);
+                        c.y = floor(mod(x*(1./256.),256.)) * (1./255.);
+                        c.z = lum * 3. - c.y - c.x;
+                        return c;
+                    }
+                    void Sort() {
+                        // change this and the SORT_SIZE value to 16 to use a larger kernel
+                        SORT8;
+                        // SOT16;
+                    }
+
+                normal: |
+                    float medians[SORT_SIZE];
+                        //do a bunch of 1D sorts on X
+                        for (int j=0; j<SORT_SIZE; j++) {
+                            //gather all X the texels for this Y
+                            for (int i=0; i<SORT_SIZE; i++) {
+                                float c = pack( sampleRasterAtPixel(0, vec2(currentRasterPixel(0) + vec2(i,j))).rgb);
+                                sort[i]=c;
+                            }
+                            Sort();
+                            //keep the median from X
+                            float m = sort[(SORT_SIZE/2)];
+                            medians[j] = m;
+                        }
+                        // normal = vec3(unpack(medians[15]));
+
+                        //sort the medians
+                        for (int i=0; i<SORT_SIZE; i++) {
+                            sort[i]=medians[i];
+                        }
+                        Sort();
+
+                        //median of medians is pretty near the true median
+                        normal = vec3(unpack(sort[(SORT_SIZE/2)]));   
+                color: |
+                    color.rgb = normal;
+
+layers:
+    terrain:
+        data: { source: normals, layer: _default }
+        draw:
+            hillshade:
+                order: 0
