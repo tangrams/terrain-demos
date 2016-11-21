@@ -1,0 +1,112 @@
+sources:
+    normals:
+        type: Raster
+        url: https://terrain-preview.mapzen.com/normal/{z}/{x}/{y}.png
+        max_zoom: 15
+
+lights:
+    directional1:
+        type: directional
+        direction: [0.5,-0.7,-0.5]
+        diffuse: [1, 1.000, 0.75]
+        ambient: [0.2, 0.3, 0.3]
+
+styles: 
+    hillshade:
+        base: raster
+        lighting: false
+        raster: normal
+        shaders:
+            defines:
+                SORT_SIZE: int(8)
+                RAMP: true
+                SWAP(sort,a,b): t = max(sort[a],sort[b]); sort[a] = min(sort[a],sort[b]); sort[b] = t;
+                SORT8: SWAP(sort,0, 1);  SWAP(sort,2, 3); SWAP(sort,0, 2); SWAP(sort,1, 3); SWAP(sort,1, 2); SWAP(sort,4, 5); SWAP(sort,6, 7); SWAP(sort,4, 6); SWAP(sort,5, 7); SWAP(sort,5, 6); SWAP(sort,0, 4); SWAP(sort,1, 5); SWAP(sort,1, 4); SWAP(sort,2, 6); SWAP(sort,3, 7); SWAP(sort,3, 6); SWAP(sort,2, 4); SWAP(sort,3, 5); SWAP(sort,3, 4);
+
+                SORT16: SWAP(sort,0, 1); SWAP(sort,2, 3); SWAP(sort,4, 5); SWAP(sort,6, 7); SWAP(sort,8, 9); SWAP(sort,10, 11); SWAP(sort,12, 13); SWAP(sort,14, 15); SWAP(sort,0, 2); SWAP(sort,4, 6); SWAP(sort,8, 10); SWAP(sort,12, 14); SWAP(sort,1, 3); SWAP(sort,5, 7); SWAP(sort,9, 11); SWAP(sort,13, 15); SWAP(sort,0, 4); SWAP(sort,8, 12); SWAP(sort,1, 5); SWAP(sort,9, 13); SWAP(sort,2, 6); SWAP(sort,10, 14); SWAP(sort,3, 7); SWAP(sort,11, 15); SWAP(sort,0, 8); SWAP(sort,1, 9); SWAP(sort,2, 10); SWAP(sort,3, 11); SWAP(sort,4, 12); SWAP(sort,5, 13); SWAP(sort,6, 14); SWAP(sort,7, 15); SWAP(sort,5, 10); SWAP(sort,6, 9); SWAP(sort,3, 12); SWAP(sort,13, 14); SWAP(sort,7, 11); SWAP(sort,1, 2); SWAP(sort,4, 8); SWAP(sort,1, 4); SWAP(sort,7, 13); SWAP(sort,2, 8); SWAP(sort,11, 14); SWAP(sort,2, 4); SWAP(sort,5, 6); SWAP(sort,9, 10); SWAP(sort,11, 13); SWAP(sort,3, 8); SWAP(sort,7, 12); SWAP(sort,6, 8); SWAP(sort,10, 12); SWAP(sort,3, 5); SWAP(sort,7, 9); SWAP(sort,3, 4); SWAP(sort,5, 6); SWAP(sort,7, 8); SWAP(sort,9, 10); SWAP(sort,11, 12); SWAP(sort,6, 7); SWAP(sort,8, 9);
+
+                SORT32: SWAP(sort,0, 16); SWAP(sort,1, 17); SWAP(sort,2, 18); SWAP(sort,3, 19); SWAP(sort,4, 20); SWAP(sort,5, 21); SWAP(sort,6, 22); SWAP(sort,7, 23); SWAP(sort,8, 24); SWAP(sort,9, 25); SWAP(sort,10, 26); SWAP(sort,11, 27); SWAP(sort,12, 28); SWAP(sort,13, 29); SWAP(sort,14, 30); SWAP(sort,15, 31); SWAP(sort,0, 8); SWAP(sort,1, 9); SWAP(sort,2, 10); SWAP(sort,3, 11); SWAP(sort,4, 12); SWAP(sort,5, 13); SWAP(sort,6, 14); SWAP(sort,7, 15); SWAP(sort,16, 24); SWAP(sort,17, 25); SWAP(sort,18, 26); SWAP(sort,19, 27); SWAP(sort,20, 28); SWAP(sort,21, 29); SWAP(sort,22, 30); SWAP(sort,23, 31); SWAP(sort,8, 16); SWAP(sort,9, 17); SWAP(sort,10, 18); SWAP(sort,11, 19); SWAP(sort,12, 20); SWAP(sort,13, 21); SWAP(sort,14, 22); SWAP(sort,15, 23); SWAP(sort,0, 4); SWAP(sort,1, 5); SWAP(sort,2, 6); SWAP(sort,3, 7); SWAP(sort,24, 28); SWAP(sort,25, 29); SWAP(sort,26, 30); SWAP(sort,27, 31); SWAP(sort,8, 12); SWAP(sort,9, 13); SWAP(sort,10, 14); SWAP(sort,11, 15); SWAP(sort,16, 20); SWAP(sort,17, 21); SWAP(sort,18, 22); SWAP(sort,19, 23); SWAP(sort,0, 2); SWAP(sort,1, 3); SWAP(sort,28, 30); SWAP(sort,29, 31); SWAP(sort,4, 16); SWAP(sort,5, 17); SWAP(sort,6, 18); SWAP(sort,7, 19); SWAP(sort,12, 24); SWAP(sort,13, 25); SWAP(sort,14, 26); SWAP(sort,15, 27); SWAP(sort,0, 1); SWAP(sort,30, 31); SWAP(sort,4, 8); SWAP(sort,5, 9); SWAP(sort,6, 10); SWAP(sort,7, 11); SWAP(sort,12, 16); SWAP(sort,13, 17); SWAP(sort,14, 18); SWAP(sort,15, 19); SWAP(sort,20, 24); SWAP(sort,21, 25); SWAP(sort,22, 26); SWAP(sort,23, 27); SWAP(sort,4, 6); SWAP(sort,5, 7); SWAP(sort,8, 10); SWAP(sort,9, 11); SWAP(sort,12, 14); SWAP(sort,13, 15); SWAP(sort,16, 18); SWAP(sort,17, 19); SWAP(sort,20, 22); SWAP(sort,21, 23); SWAP(sort,24, 26); SWAP(sort,25, 27); SWAP(sort,2, 16); SWAP(sort,3, 17); SWAP(sort,6, 20); SWAP(sort,7, 21); SWAP(sort,10, 24); SWAP(sort,11, 25); SWAP(sort,14, 28); SWAP(sort,15, 29); SWAP(sort,2, 8); SWAP(sort,3, 9); SWAP(sort,6, 12); SWAP(sort,7, 13); SWAP(sort,10, 16); SWAP(sort,11, 17); SWAP(sort,14, 20); SWAP(sort,15, 21); SWAP(sort,18, 24); SWAP(sort,19, 25); SWAP(sort,22, 28); SWAP(sort,23, 29); SWAP(sort,2, 4); SWAP(sort,3, 5); SWAP(sort,6, 8); SWAP(sort,7, 9); SWAP(sort,10, 12); SWAP(sort,11, 13); SWAP(sort,14, 16); SWAP(sort,15, 17); SWAP(sort,18, 20); SWAP(sort,19, 21); SWAP(sort,22, 24); SWAP(sort,23, 25); SWAP(sort,26, 28); SWAP(sort,27, 29); SWAP(sort,2, 3); SWAP(sort,4, 5); SWAP(sort,6, 7); SWAP(sort,8, 9); SWAP(sort,10, 11); SWAP(sort,12, 13); SWAP(sort,14, 15); SWAP(sort,16, 17); SWAP(sort,18, 19); SWAP(sort,20, 21); SWAP(sort,22, 23); SWAP(sort,24, 25); SWAP(sort,26, 27); SWAP(sort,28, 29); SWAP(sort,1, 16); SWAP(sort,3, 18); SWAP(sort,5, 20); SWAP(sort,7, 22); SWAP(sort,9, 24); SWAP(sort,11, 26); SWAP(sort,13, 28); SWAP(sort,15, 30); SWAP(sort,1, 8); SWAP(sort,3, 10); SWAP(sort,5, 12); SWAP(sort,7, 14); SWAP(sort,9, 16); SWAP(sort,11, 18); SWAP(sort,13, 20); SWAP(sort,15, 22); SWAP(sort,17, 24); SWAP(sort,19, 26); SWAP(sort,21, 28); SWAP(sort,23, 30); SWAP(sort,1, 4); SWAP(sort,3, 6); SWAP(sort,5, 8); SWAP(sort,7, 10); SWAP(sort,9, 12); SWAP(sort,11, 14); SWAP(sort,13, 16); SWAP(sort,15, 18); SWAP(sort,17, 20); SWAP(sort,19, 22); SWAP(sort,21, 24); SWAP(sort,23, 26); SWAP(sort,25, 28); SWAP(sort,27, 30); SWAP(sort,1, 2); SWAP(sort,3, 4); SWAP(sort,5, 6); SWAP(sort,7, 8); SWAP(sort,9, 10); SWAP(sort,11, 12); SWAP(sort,13, 14); SWAP(sort,15, 16); SWAP(sort,17, 18); SWAP(sort,19, 20); SWAP(sort,21, 22); SWAP(sort,23, 24); SWAP(sort,25, 26); SWAP(sort,27, 28); SWAP(sort,29, 30); 
+
+                SORT64: SWAP(sort,0, 32); SWAP(sort,1, 33); SWAP(sort,2, 34); SWAP(sort,3, 35); SWAP(sort,4, 36); SWAP(sort,5, 37); SWAP(sort,6, 38); SWAP(sort,7, 39); SWAP(sort,8, 40); SWAP(sort,9, 41); SWAP(sort,10, 42); SWAP(sort,11, 43); SWAP(sort,12, 44); SWAP(sort,13, 45); SWAP(sort,14, 46); SWAP(sort,15, 47); SWAP(sort,16, 48); SWAP(sort,17, 49); SWAP(sort,18, 50); SWAP(sort,19, 51); SWAP(sort,20, 52); SWAP(sort,21, 53); SWAP(sort,22, 54); SWAP(sort,23, 55); SWAP(sort,24, 56); SWAP(sort,25, 57); SWAP(sort,26, 58); SWAP(sort,27, 59); SWAP(sort,28, 60); SWAP(sort,29, 61); SWAP(sort,30, 62); SWAP(sort,31, 63); SWAP(sort,0, 16); SWAP(sort,1, 17); SWAP(sort,2, 18); SWAP(sort,3, 19); SWAP(sort,4, 20); SWAP(sort,5, 21); SWAP(sort,6, 22); SWAP(sort,7, 23); SWAP(sort,8, 24); SWAP(sort,9, 25); SWAP(sort,10, 26); SWAP(sort,11, 27); SWAP(sort,12, 28); SWAP(sort,13, 29); SWAP(sort,14, 30); SWAP(sort,15, 31); SWAP(sort,32, 48); SWAP(sort,33, 49); SWAP(sort,34, 50); SWAP(sort,35, 51); SWAP(sort,36, 52); SWAP(sort,37, 53); SWAP(sort,38, 54); SWAP(sort,39, 55); SWAP(sort,40, 56); SWAP(sort,41, 57); SWAP(sort,42, 58); SWAP(sort,43, 59); SWAP(sort,44, 60); SWAP(sort,45, 61); SWAP(sort,46, 62); SWAP(sort,47, 63); SWAP(sort,16, 32); SWAP(sort,17, 33); SWAP(sort,18, 34); SWAP(sort,19, 35); SWAP(sort,20, 36); SWAP(sort,21, 37); SWAP(sort,22, 38); SWAP(sort,23, 39); SWAP(sort,24, 40); SWAP(sort,25, 41); SWAP(sort,26, 42); SWAP(sort,27, 43); SWAP(sort,28, 44); SWAP(sort,29, 45); SWAP(sort,30, 46); SWAP(sort,31, 47); SWAP(sort,0, 8); SWAP(sort,1, 9); SWAP(sort,2, 10); SWAP(sort,3, 11); SWAP(sort,4, 12); SWAP(sort,5, 13); SWAP(sort,6, 14); SWAP(sort,7, 15); SWAP(sort,48, 56); SWAP(sort,49, 57); SWAP(sort,50, 58); SWAP(sort,51, 59); SWAP(sort,52, 60); SWAP(sort,53, 61); SWAP(sort,54, 62); SWAP(sort,55, 63); SWAP(sort,16, 24); SWAP(sort,17, 25); SWAP(sort,18, 26); SWAP(sort,19, 27); SWAP(sort,20, 28); SWAP(sort,21, 29); SWAP(sort,22, 30); SWAP(sort,23, 31); SWAP(sort,32, 40); SWAP(sort,33, 41); SWAP(sort,34, 42); SWAP(sort,35, 43); SWAP(sort,36, 44); SWAP(sort,37, 45); SWAP(sort,38, 46); SWAP(sort,39, 47); SWAP(sort,0, 4); SWAP(sort,1, 5); SWAP(sort,2, 6); SWAP(sort,3, 7); SWAP(sort,56, 60); SWAP(sort,57, 61); SWAP(sort,58, 62); SWAP(sort,59, 63); SWAP(sort,8, 32); SWAP(sort,9, 33); SWAP(sort,10, 34); SWAP(sort,11, 35); SWAP(sort,12, 36); SWAP(sort,13, 37); SWAP(sort,14, 38); SWAP(sort,15, 39); SWAP(sort,24, 48); SWAP(sort,25, 49); SWAP(sort,26, 50); SWAP(sort,27, 51); SWAP(sort,28, 52); SWAP(sort,29, 53); SWAP(sort,30, 54); SWAP(sort,31, 55); SWAP(sort,0, 2); SWAP(sort,1, 3); SWAP(sort,60, 62); SWAP(sort,61, 63); SWAP(sort,8, 16); SWAP(sort,9, 17); SWAP(sort,10, 18); SWAP(sort,11, 19); SWAP(sort,12, 20); SWAP(sort,13, 21); SWAP(sort,14, 22); SWAP(sort,15, 23); SWAP(sort,24, 32); SWAP(sort,25, 33); SWAP(sort,26, 34); SWAP(sort,27, 35); SWAP(sort,28, 36); SWAP(sort,29, 37); SWAP(sort,30, 38); SWAP(sort,31, 39); SWAP(sort,40, 48); SWAP(sort,41, 49); SWAP(sort,42, 50); SWAP(sort,43, 51); SWAP(sort,44, 52); SWAP(sort,45, 53); SWAP(sort,46, 54); SWAP(sort,47, 55); SWAP(sort,0, 1); SWAP(sort,62, 63); SWAP(sort,8, 12); SWAP(sort,9, 13); SWAP(sort,10, 14); SWAP(sort,11, 15); SWAP(sort,16, 20); SWAP(sort,17, 21); SWAP(sort,18, 22); SWAP(sort,19, 23); SWAP(sort,24, 28); SWAP(sort,25, 29); SWAP(sort,26, 30); SWAP(sort,27, 31); SWAP(sort,32, 36); SWAP(sort,33, 37); SWAP(sort,34, 38); SWAP(sort,35, 39); SWAP(sort,40, 44); SWAP(sort,41, 45); SWAP(sort,42, 46); SWAP(sort,43, 47); SWAP(sort,48, 52); SWAP(sort,49, 53); SWAP(sort,50, 54); SWAP(sort,51, 55); SWAP(sort,4, 32); SWAP(sort,5, 33); SWAP(sort,6, 34); SWAP(sort,7, 35); SWAP(sort,12, 40); SWAP(sort,13, 41); SWAP(sort,14, 42); SWAP(sort,15, 43); SWAP(sort,20, 48); SWAP(sort,21, 49); SWAP(sort,22, 50); SWAP(sort,23, 51); SWAP(sort,28, 56); SWAP(sort,29, 57); SWAP(sort,30, 58); SWAP(sort,31, 59); SWAP(sort,4, 16); SWAP(sort,5, 17); SWAP(sort,6, 18); SWAP(sort,7, 19); SWAP(sort,12, 24); SWAP(sort,13, 25); SWAP(sort,14, 26); SWAP(sort,15, 27); SWAP(sort,20, 32); SWAP(sort,21, 33); SWAP(sort,22, 34); SWAP(sort,23, 35); SWAP(sort,28, 40); SWAP(sort,29, 41); SWAP(sort,30, 42); SWAP(sort,31, 43); SWAP(sort,36, 48); SWAP(sort,37, 49); SWAP(sort,38, 50); SWAP(sort,39, 51); SWAP(sort,44, 56); SWAP(sort,45, 57); SWAP(sort,46, 58); SWAP(sort,47, 59); SWAP(sort,4, 8); SWAP(sort,5, 9); SWAP(sort,6, 10); SWAP(sort,7, 11); SWAP(sort,12, 16); SWAP(sort,13, 17); SWAP(sort,14, 18); SWAP(sort,15, 19); SWAP(sort,20, 24); SWAP(sort,21, 25); SWAP(sort,22, 26); SWAP(sort,23, 27); SWAP(sort,28, 32); SWAP(sort,29, 33); SWAP(sort,30, 34); SWAP(sort,31, 35); SWAP(sort,36, 40); SWAP(sort,37, 41); SWAP(sort,38, 42); SWAP(sort,39, 43); SWAP(sort,44, 48); SWAP(sort,45, 49); SWAP(sort,46, 50); SWAP(sort,47, 51); SWAP(sort,52, 56); SWAP(sort,53, 57); SWAP(sort,54, 58); SWAP(sort,55, 59); SWAP(sort,4, 6); SWAP(sort,5, 7); SWAP(sort,8, 10); SWAP(sort,9, 11); SWAP(sort,12, 14); SWAP(sort,13, 15); SWAP(sort,16, 18); SWAP(sort,17, 19); SWAP(sort,20, 22); SWAP(sort,21, 23); SWAP(sort,24, 26); SWAP(sort,25, 27); SWAP(sort,28, 30); SWAP(sort,29, 31); SWAP(sort,32, 34); SWAP(sort,33, 35); SWAP(sort,36, 38); SWAP(sort,37, 39); SWAP(sort,40, 42); SWAP(sort,41, 43); SWAP(sort,44, 46); SWAP(sort,45, 47); SWAP(sort,48, 50); SWAP(sort,49, 51); SWAP(sort,52, 54); SWAP(sort,53, 55); SWAP(sort,56, 58); SWAP(sort,57, 59); SWAP(sort,2, 32); SWAP(sort,3, 33); SWAP(sort,6, 36); SWAP(sort,7, 37); SWAP(sort,10, 40); SWAP(sort,11, 41); SWAP(sort,14, 44); SWAP(sort,15, 45); SWAP(sort,18, 48); SWAP(sort,19, 49); SWAP(sort,22, 52); SWAP(sort,23, 53); SWAP(sort,26, 56); SWAP(sort,27, 57); SWAP(sort,30, 60); SWAP(sort,31, 61); SWAP(sort,2, 16); SWAP(sort,3, 17); SWAP(sort,6, 20); SWAP(sort,7, 21); SWAP(sort,10, 24); SWAP(sort,11, 25); SWAP(sort,14, 28); SWAP(sort,15, 29); SWAP(sort,18, 32); SWAP(sort,19, 33); SWAP(sort,22, 36); SWAP(sort,23, 37); SWAP(sort,26, 40); SWAP(sort,27, 41); SWAP(sort,30, 44); SWAP(sort,31, 45); SWAP(sort,34, 48); SWAP(sort,35, 49); SWAP(sort,38, 52); SWAP(sort,39, 53); SWAP(sort,42, 56); SWAP(sort,43, 57); SWAP(sort,46, 60); SWAP(sort,47, 61); SWAP(sort,2, 8); SWAP(sort,3, 9); SWAP(sort,6, 12); SWAP(sort,7, 13); SWAP(sort,10, 16); SWAP(sort,11, 17); SWAP(sort,14, 20); SWAP(sort,15, 21); SWAP(sort,18, 24); SWAP(sort,19, 25); SWAP(sort,22, 28); SWAP(sort,23, 29); SWAP(sort,26, 32); SWAP(sort,27, 33); SWAP(sort,30, 36); SWAP(sort,31, 37); SWAP(sort,34, 40); SWAP(sort,35, 41); SWAP(sort,38, 44); SWAP(sort,39, 45); SWAP(sort,42, 48); SWAP(sort,43, 49); SWAP(sort,46, 52); SWAP(sort,47, 53); SWAP(sort,50, 56); SWAP(sort,51, 57); SWAP(sort,54, 60); SWAP(sort,55, 61); SWAP(sort,2, 4); SWAP(sort,3, 5); SWAP(sort,6, 8); SWAP(sort,7, 9); SWAP(sort,10, 12); SWAP(sort,11, 13); SWAP(sort,14, 16); SWAP(sort,15, 17); SWAP(sort,18, 20); SWAP(sort,19, 21); SWAP(sort,22, 24); SWAP(sort,23, 25); SWAP(sort,26, 28); SWAP(sort,27, 29); SWAP(sort,30, 32); SWAP(sort,31, 33); SWAP(sort,34, 36); SWAP(sort,35, 37); SWAP(sort,38, 40); SWAP(sort,39, 41); SWAP(sort,42, 44); SWAP(sort,43, 45); SWAP(sort,46, 48); SWAP(sort,47, 49); SWAP(sort,50, 52); SWAP(sort,51, 53); SWAP(sort,54, 56); SWAP(sort,55, 57); SWAP(sort,58, 60); SWAP(sort,59, 61); SWAP(sort,2, 3); SWAP(sort,4, 5); SWAP(sort,6, 7); SWAP(sort,8, 9); SWAP(sort,10, 11); SWAP(sort,12, 13); SWAP(sort,14, 15); SWAP(sort,16, 17); SWAP(sort,18, 19); SWAP(sort,20, 21); SWAP(sort,22, 23); SWAP(sort,24, 25); SWAP(sort,26, 27); SWAP(sort,28, 29); SWAP(sort,30, 31); SWAP(sort,32, 33); SWAP(sort,34, 35); SWAP(sort,36, 37); SWAP(sort,38, 39); SWAP(sort,40, 41); SWAP(sort,42, 43); SWAP(sort,44, 45); SWAP(sort,46, 47); SWAP(sort,48, 49); SWAP(sort,50, 51); SWAP(sort,52, 53); SWAP(sort,54, 55); SWAP(sort,56, 57); SWAP(sort,58, 59); SWAP(sort,60, 61); SWAP(sort,1, 32); SWAP(sort,3, 34); SWAP(sort,5, 36); SWAP(sort,7, 38); SWAP(sort,9, 40); SWAP(sort,11, 42); SWAP(sort,13, 44); SWAP(sort,15, 46); SWAP(sort,17, 48); SWAP(sort,19, 50); SWAP(sort,21, 52); SWAP(sort,23, 54); SWAP(sort,25, 56); SWAP(sort,27, 58); SWAP(sort,29, 60); SWAP(sort,31, 62); SWAP(sort,1, 16); SWAP(sort,3, 18); SWAP(sort,5, 20); SWAP(sort,7, 22); SWAP(sort,9, 24); SWAP(sort,11, 26); SWAP(sort,13, 28); SWAP(sort,15, 30); SWAP(sort,17, 32); SWAP(sort,19, 34); SWAP(sort,21, 36); SWAP(sort,23, 38); SWAP(sort,25, 40); SWAP(sort,27, 42); SWAP(sort,29, 44); SWAP(sort,31, 46); SWAP(sort,33, 48); SWAP(sort,35, 50); SWAP(sort,37, 52); SWAP(sort,39, 54); SWAP(sort,41, 56); SWAP(sort,43, 58); SWAP(sort,45, 60); SWAP(sort,47, 62); SWAP(sort,1, 8); SWAP(sort,3, 10); SWAP(sort,5, 12); SWAP(sort,7, 14); SWAP(sort,9, 16); SWAP(sort,11, 18); SWAP(sort,13, 20); SWAP(sort,15, 22); SWAP(sort,17, 24); SWAP(sort,19, 26); SWAP(sort,21, 28); SWAP(sort,23, 30); SWAP(sort,25, 32); SWAP(sort,27, 34); SWAP(sort,29, 36); SWAP(sort,31, 38); SWAP(sort,33, 40); SWAP(sort,35, 42); SWAP(sort,37, 44); SWAP(sort,39, 46); SWAP(sort,41, 48); SWAP(sort,43, 50); SWAP(sort,45, 52); SWAP(sort,47, 54); SWAP(sort,49, 56); SWAP(sort,51, 58); SWAP(sort,53, 60); SWAP(sort,55, 62); SWAP(sort,1, 4); SWAP(sort,3, 6); SWAP(sort,5, 8); SWAP(sort,7, 10); SWAP(sort,9, 12); SWAP(sort,11, 14); SWAP(sort,13, 16); SWAP(sort,15, 18); SWAP(sort,17, 20); SWAP(sort,19, 22); SWAP(sort,21, 24); SWAP(sort,23, 26); SWAP(sort,25, 28); SWAP(sort,27, 30); SWAP(sort,29, 32); SWAP(sort,31, 34); SWAP(sort,33, 36); SWAP(sort,35, 38); SWAP(sort,37, 40); SWAP(sort,39, 42); SWAP(sort,41, 44); SWAP(sort,43, 46); SWAP(sort,45, 48); SWAP(sort,47, 50); SWAP(sort,49, 52); SWAP(sort,51, 54); SWAP(sort,53, 56); SWAP(sort,55, 58); SWAP(sort,57, 60); SWAP(sort,59, 62); SWAP(sort,1, 2); SWAP(sort,3, 4); SWAP(sort,5, 6); SWAP(sort,7, 8); SWAP(sort,9, 10); SWAP(sort,11, 12); SWAP(sort,13, 14); SWAP(sort,15, 16); SWAP(sort,17, 18); SWAP(sort,19, 20); SWAP(sort,21, 22); SWAP(sort,23, 24); SWAP(sort,25, 26); SWAP(sort,27, 28); SWAP(sort,29, 30); SWAP(sort,31, 32); SWAP(sort,33, 34); SWAP(sort,35, 36); SWAP(sort,37, 38); SWAP(sort,39, 40); SWAP(sort,41, 42); SWAP(sort,43, 44); SWAP(sort,45, 46); SWAP(sort,47, 48); SWAP(sort,49, 50); SWAP(sort,51, 52); SWAP(sort,53, 54); SWAP(sort,55, 56); SWAP(sort,57, 58); SWAP(sort,59, 60); SWAP(sort,61, 62); 
+
+            blocks:
+                global: |
+                    float t;
+                    float sort[SORT_SIZE];
+                    float quant(float x) {
+                        x = clamp(x,0.,1.);
+                        return floor(x*255.);
+                    }
+                    float pack(vec3 c) {   
+                        float lum = (c.x+c.y+c.z)*(1./3.);
+                        //want to sort by luminance I guess so put that in MSB and quantize everything to 8 bit
+                        //since floats represent 24 bit ints you get 3 channels and only have to sort a scalar value
+                        return quant(c.x) + quant(c.y)*256. + quant(lum) * 65536.;
+                    }
+
+                    vec3 unpack(float x) {
+                        float lum = floor(x * (1./65536.)) * (1./255.);
+                        vec3 c;
+                        c.x = floor(mod(x,256.)) * (1./255.);
+                        c.y = floor(mod(x*(1./256.),256.)) * (1./255.);
+                        c.z = lum * 3. - c.y - c.x;
+                        return c;
+                    }
+                    void Sort() {
+                        SORT8
+                    }
+
+                normal: |
+
+                    float medians[SORT_SIZE];
+                    normal;
+                    vec3 workingnormal = normal.rgb;
+                    #ifdef RAMP
+                        //pick a radius to ramp up and down to demo the effect ... sorting networks are fixed size.
+                        float r = (sin(u_time+5.)*0.5+0.5)*float(SORT_SIZE/2)*1.1;
+
+                    //do a bunch of 1D sorts on X
+                    for (int j=0; j<SORT_SIZE; j++) {
+                        //gather all X the texels for this Y
+                        for (int i=0; i<SORT_SIZE; i++) {
+                            float c = pack( workingnormal.rgb );
+
+                        #ifdef RAMP
+                            if (float(i)<float(SORT_SIZE/2) - r) c=-1e10;   //force to beginning of sorted list
+                            if (float(i)>float(SORT_SIZE/2) + r) c=1e10;    //force to end of sorted list
+                        #endif
+                            sort[i]=c;
+                        }
+
+                        Sort();
+
+                        //keep the median from X
+                        float m = sort[(SORT_SIZE/2)];
+
+                        #ifdef RAMP
+                        if (float(j)<float(SORT_SIZE/2) - r) m=-1e10;
+                        if (float(j)>float(SORT_SIZE/2) + r) m=1e10;                
+                        #endif  
+                        medians[j] = m;
+                    }
+
+                    //sort the medians
+                    for (int i=0; i<SORT_SIZE; i++) {
+                        sort[i]=medians[i];
+                    }   
+                    Sort();
+                    
+                    //median of medians is pretty near the true median
+                    fragColor = vec4(unpack(sort[(SORT_SIZE/2)]),1.0);
+
+                color: |
+                    //color.rgb = normal;
+                    // color.rgb = normal / 2. + .5;
+                    color.rgb = normal * 2.;
+
+layers:
+    terrain:
+        data: { source: normals, layer: _default }
+        draw:
+            hillshade:
+                order: 0

@@ -1,0 +1,67 @@
+const int SORT_SIZE = 8
+
+float sort[SORT_SIZE];
+float medians[SORT_SIZE];
+
+// [0., 1.] -> [0, 255]
+float quant(float x)
+{
+   x = clamp(x, 0., 1.);
+   return floor(x * 255.);
+}
+
+float pack(vec3 c)
+{
+   float lum = (c.x + c.y + c.z) * (1. / 3.);
+
+   return lum;
+}
+
+vec3 unpack(float x)
+{
+   return vec3(x);
+}
+
+#define SWAP(a,b) { float t = sort[a]; sort[a] = sort[b]; sort[b] = t; }
+void bubble_sort(int num)
+{
+        for(int j = 0; j < num; ++j)
+        {
+               for(int i= num-1; i >j; --i)
+               {
+                   if(sort[i] < sort[i-1])
+                   {
+                        SWAP(i, i-1);
+                   }
+               }
+        }
+}
+
+uniform sampler2D iChannel0;
+//const vec2 iResolution = vec2(512., 512.);
+
+//vec2 ooRes = vec2(1.) / iResolution.xy;
+
+for (int j=0; j<SORT_SIZE; j++)
+{
+  for (int i=0; i<SORT_SIZE; i++)
+  {
+     //vec2 uv = (gl_FragCoord.xy + vec2(i,j)-vec2(SORT_SIZE/2)) * ooRes;
+     //float c = pack( texture2D(iChannel0,uv).rgb );
+     float c = pack ( normal );
+
+     sort[i] = c;
+  }
+  bubble_sort( SORT_SIZE);
+
+  float m = sort[(SORT_SIZE/2)];
+
+  medians[j] = m;
+}
+
+for (int i=0; i<SORT_SIZE; i++)
+{
+  sort[i] = medians[i];
+}
+bubble_sort( SORT_SIZE);
+normal = vec3(unpack(sort[SORT_SIZE/2]));

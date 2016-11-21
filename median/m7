@@ -1,0 +1,80 @@
+sources:
+    normals:
+        type: Raster
+        url: https://terrain-preview.mapzen.com/normal/{z}/{x}/{y}.png
+        max_zoom: 15
+
+lights:
+    directional1:
+        type: directional
+        direction: [0.5,-0.7,-0.5]
+        diffuse: [1, 1.000, 0.75]
+        ambient: [0.2, 0.3, 0.3]
+
+styles: 
+    hillshade:
+        base: raster
+        lighting: false
+        raster: normal
+        shaders:
+            defines:
+                SWAP(a,b): float t = sort[a]; sort[a] = sort[b]; sort[b] = t;
+            blocks:
+                global: |
+                    float packa(in vec3 c) {
+                        return (c.x + c.y + c.z) / 3.;
+                    }
+                normal: |
+
+                    const int SORT_SIZE = 8;
+                    const int SORT_SIZE_M1 = 7;
+
+                    float sort[SORT_SIZE];
+                    float medians[SORT_SIZE];
+
+                    for (int j=0; j<SORT_SIZE; j++) {
+                        for (int i=0; i<SORT_SIZE; i++) {
+                         //vec2 uv = (gl_FragCoord.xy + vec2(i,j)-vec2(SORT_SIZE/2)) * ooRes;
+                         //float c = pack( texture2D(iChannel0,uv).rgb );
+                         float c = packa( vec3(normal) );
+                         sort[i] = c;
+                        }
+
+                        // bubble sort
+                        for(int j = 0; j < SORT_SIZE; ++j) {
+                            for(int i= SORT_SIZE_M1; i < SORT_SIZE; --i) {
+                               if (i <= j) continue;
+                               if(sort[i] < sort[i-1]) {
+                                    SWAP(i, i-1);
+                               }
+                            }
+                        }
+
+                        float m = sort[(SORT_SIZE/2)];
+
+                        medians[j] = m;
+                    }
+                    
+                    for (int i=0; i<SORT_SIZE; i++) {
+                      sort[i] = medians[i];
+                    }
+
+                    for(int j = 0; j < SORT_SIZE; ++j) {
+                        for(int i= SORT_SIZE_M1; i < SORT_SIZE; --i) {
+                           if (i <= j) continue;
+                           if(sort[i] < sort[i-1]) {
+                                SWAP(i, i-1);
+                           }
+                        }
+                    }
+                    normal = vec3(sort[SORT_SIZE/2]);
+                
+                color: |
+                    color.rgb = normal;
+
+layers:
+    terrain:
+        data: { source: normals, layer: _default }
+        draw:
+            hillshade:
+                order: 0

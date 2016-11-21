@@ -1,0 +1,69 @@
+sources:
+    normals:
+        type: Raster
+        url: https://terrain-preview.mapzen.com/normal/{z}/{x}/{y}.png
+        max_zoom: 15
+
+lights:
+    directional1:
+        type: directional
+        direction: [0.5,-0.7,-0.5]
+        diffuse: [1, 1.000, 0.75]
+        ambient: [0.2, 0.3, 0.3]
+
+styles: 
+    hillshade:
+        base: raster
+        # lighting: false
+        raster: normal
+        shaders:
+            blocks:
+                normal: |
+                    // median filter
+                    // adapted from https://www.shadertoy.com/view/XstGW4
+
+                    vec2 xy = currentRasterPixel(0);
+                    const int radius = 35;
+                    const int bounds = (radius - 1) / 2;
+                    vec4 sum  = vec4(0.0);
+                    for (int i = (0 - bounds); i <= bounds; i++)
+                    {
+                        for (int j = (0 - bounds); j <= bounds; j++ )
+                        {
+                            sum += sampleRasterAtPixel(0, vec2(currentRasterPixel(0) + vec2(i, j)));
+                        }
+                    }
+                    vec4 mean = vec4(sum / vec4(pow(float(radius), 2.0)));
+                    float mean_avg = float(mean);
+                    float comp_avg = 0.0;
+                    vec4 comp  = vec4(0.0);
+                    vec4 median  = mean;
+                    for (int i = (0 - bounds); i <= bounds; i++)
+                    {
+                        for (int j = (0 - bounds); j <= bounds; j++ )
+                        {
+                            comp = sampleRasterAtPixel(0, vec2(currentRasterPixel(0) + vec2(i, j)));
+                            comp_avg = float(comp);
+                            median = (comp_avg < mean_avg) ? max(median, comp) : median;
+                        }
+                    }
+
+                    // normal = normal;
+                    // normal = normal.rgb - median.rgb;
+                    normal = vec3(1. -abs(normal.rgb - median.rgb)), 1.0;
+
+                    // normal.z *= .01;
+                    // normal = normalize(normal);
+
+                color: |
+                    color.rgb = normal;
+                    // color.rgb = 1. - normal;
+                    // color.rgb = normal + 1.;
+                    // color.rgb = normal / 2. + .5;
+
+layers:
+    terrain:
+        data: { source: normals, layer: _default }
+        draw:
+            hillshade:
+                order: 0
