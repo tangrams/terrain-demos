@@ -1,0 +1,58 @@
+sources:
+    normals:
+        type: Raster
+        url: https://terrain-preview.mapzen.com/normal/{z}/{x}/{y}.png
+        max_zoom: 15
+
+lights:
+    directional1:
+        type: directional
+        direction: [0.5,-0.7,-0.5]
+        diffuse: [1, 1.000, 0.75]
+        ambient: [0.2, 0.3, 0.3]
+
+styles: 
+    hillshade:
+        base: raster
+        raster: normal
+        shaders:
+            blocks:
+                normal: |
+                    // weighted average
+                    const int mSize = 3; // kernel width
+                    const int kSize = (mSize-1)/2;
+                    
+                    // kernel weights:
+                    // [1 2 1
+                    //  2 4 2
+                    //  1 2 1]
+
+                    // loop over the kernel
+                    vec3 final = vec3(0.0);
+                    for (int i=-kSize; i <= kSize; ++i) {
+                        for (int j=-kSize; j <= kSize; ++j) {
+                            vec3 sample = sampleRasterAtPixel(0, vec2(currentRasterPixel(0) + vec2(float(i),float(j)))).rgb;
+                            if (i == 0) {
+                                sample *= 2.;
+                            }
+                            if (j == 0) {
+                                sample *= 2.;
+                            }
+                            final += sample;
+                        }
+
+                    }
+                    // find the weighted mean of the sampled values
+                    // (divide by sum of all the weights)
+                    vec3 mean = final / 16.;
+
+                    normal = mean;
+                    // normalize it
+                    normal = normalize(normal);
+
+layers:
+    terrain:
+        data: { source: normals, layer: _default }
+        draw:
+            hillshade:
+                order: 0
