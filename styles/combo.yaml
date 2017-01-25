@@ -10,7 +10,7 @@ sources:
         rasters: [elevation]
     elevation:
         type: Raster
-        url: https://terrain-preview.mapzen.com/terrarium/{z}/{x}/{y}.png
+        url: https://tile.mapzen.com/mapzen/terrain/v1/terrarium/{z}/{x}/{y}.png?api_key=mapzen-QF1osLn
         max_zoom: 15
 
 lights:
