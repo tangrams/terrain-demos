@@ -1,0 +1,37 @@
+﻿sources:
+    normals:
+        type: Raster
+        url: https://tile.mapzen.com/mapzen/terrain/v1/normal/{z}/{x}/{y}.png?api_key=mapzen-tDHBHDp
+        max_zoom: 15
+    _raster:
+        type: Raster
+        url: https://a.tile.openstreetmap.org/{z}/{x}/{y}.png
+        # url: https://maps.wikimedia.org/osm-intl/{z}/{x}/{y}.png
+        # url: http://a.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png
+        # url: http://tile.stamen.com/toner/{z}/{x}/{y}.png
+        # url: http://tile.stamen.com/watercolor/{z}/{x}/{y}.png
+        # url: http://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png
+        max_zoom: 15
+        rasters: [normals]
+
+lights:
+    light1:
+        type: directional
+        direction: [.5, -.5, -1]
+        diffuse: 1.2
+
+styles:
+    hillshade:
+        base: raster
+        shaders:
+                blocks:
+                    normal: |
+                        normal.xyz = sampleRaster(1).xyz;
+                        normal = (normal - .5) * 2.;
+
+layers:
+    _raster:
+        data: { source: _raster }
+        draw:
+            hillshade:
+                order: 0
