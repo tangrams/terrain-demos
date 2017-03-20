@@ -1,5 +1,5 @@
-﻿sources:
-    osm: 
+sources:
+    mapzen:
         type: TopoJSON
         url: https://tile.mapzen.com/mapzen/vector/v1/all/{z}/{x}/{y}.topojson
         url_params:
@@ -30,7 +30,7 @@ layers:
                 order: 0
 
     water:
-        data: { source: osm }
+        data: { source: mapzen }
         filter: {boundary: true}
         draw:
             lines: 
@@ -39,7 +39,7 @@ layers:
                 width: 1px
 
     places:
-        data: { source: osm}
+        data: { source: mapzen }
         filter: 
             kind: [city]
         draw:

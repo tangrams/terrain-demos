@@ -4,7 +4,7 @@ scene:
         color: white
 
 sources:
-    osm: 
+    mapzen:
         type: TopoJSON
         url: https://tile.mapzen.com/mapzen/vector/v1/all/{z}/{x}/{y}.topojson
         url_params:
@@ -68,12 +68,12 @@ styles:
 
 layers:
     earth:
-        data: { source: osm }
+        data: { source: mapzen }
         draw:
             hillshade:
                 order: 1
     water:
-        data: { source: osm }
+        data: { source: mapzen }
         filter: { kind: [lakes], boundary: true }
         draw:
             lines: 

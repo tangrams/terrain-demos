@@ -1,5 +1,5 @@
 sources:
-    osm: 
+    mapzen:
         type: TopoJSON
         url: https://tile.mapzen.com/mapzen/vector/v1/all/{z}/{x}/{y}.topojson
         url_params:
@@ -61,7 +61,7 @@ layers:
                 order: 0
 
     places:
-        data: { source: osm}
+        data: { source: mapzen }
         filter: 
             kind: [city]
         draw:
@@ -71,13 +71,13 @@ layers:
                     size: 16px
                     stroke: { color: '#444', width: 4px}
     boundaries:
-        data: { source: osm }
+        data: { source: mapzen }
         draw:
             dots:
                 color: [.75, .75, .75]
                 width: 1px
     water:
-        data: { source: osm }
+        data: { source: mapzen }
         lines:
             filter: {boundary: true}
             draw:
@@ -86,13 +86,13 @@ layers:
                     color: [.3, .3, .3]
                     width: .3px
     water-terrain:
-        data: { source: osm, layer: water }
+        data: { source: mapzen, layer: water }
         draw:
             fadepolys:
                 order: 4
 
     roads:
-        data: { source: osm }
+        data: { source: mapzen }
         draw:
             fadelines:
                 order: 3
@@ -111,7 +111,7 @@ layers:
                             color: function() {return [0, 0, 0, $zoom/15.];}
                             width: 1px
     places:
-        data: { source: osm }
+        data: { source: mapzen }
         filter: { not: { kind: [neighbourhood] } }
         countries:
             filter: { kind: country }
@@ -160,7 +160,7 @@ layers:
                             color: black
                             width: 2px
     buildings:
-        data: {source: osm}
+        data: {source: mapzen }
         draw:
             fadelines:
                 order: 10
