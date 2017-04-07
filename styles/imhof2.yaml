@@ -26,11 +26,7 @@ styles:
                 global: |
                     // Simplified view-independent environment map
                     vec4 applyEnvmap (in sampler2D _tex, in vec3 _normal) {
-                        const vec3 eye = vec3(0.,0.,-1.);
-                        vec3 r = reflect(eye, _normal);
-                        r.z += 1.0;
-                        float m = 2. * length(r);
-                        vec2 uv = r.xy / m + .5;
+                        vec2 uv = 0.5 * _normal.xy + 0.5;
                         return texture2D(_tex, uv);
                     }
                 color: |                    
