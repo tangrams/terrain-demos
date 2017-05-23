@@ -1,0 +1,50 @@
+sources:
+    mapzen:
+        type: TopoJSON
+        url: https://tile.mapzen.com/mapzen/vector/v1/all/{z}/{x}/{y}.topojson
+        url_params:
+            api_key: mapzen-tDHBHDp
+        max_zoom: 16
+    elevation:
+        type: Raster
+        url: https://tile.mapzen.com/mapzen/terrain/v1/terrarium/{z}/{x}/{y}.png
+        url_params:
+            api_key: mapzen-tDHBHDp
+        max_zoom: 15
+
+textures:
+    palette:
+        url: ../img/hypsometric01.png
+        # filtering: nearest
+
+styles: 
+    hypsometric:
+        base: raster
+        lighting: false
+        shaders:
+            defines:
+                SCALE: 4.
+            uniforms:
+                u_palette: palette
+            blocks:
+                global: |
+                    float unpack(vec4 h) {
+                        // GPU reads each 0-255 channel as range 0-1, right where we want it
+                        // assemble to get height
+                        return (h.r * 1. + h.g / 256. + h.b / 65536.);
+                    }
+                color: |
+                    // I don't understand why this scale function works yet
+                    float height = unpack(color) * SCALE - (SCALE - 1.)/2.;
+                    color = vec4(1.0);
+                    // height to color from palette LUT
+                    // color = texture2D(u_palette, vec2(clamp(height,0.0,1.0),.5));
+                    color = texture2D(u_palette, vec2(height,0.5));
+
+
+layers:
+    terrain:
+        data: { source: elevation, layer: _default }
+        draw:
+            hypsometric:
+                order: 0
