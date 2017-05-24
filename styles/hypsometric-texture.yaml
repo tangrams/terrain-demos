@@ -15,6 +15,7 @@ sources:
 textures:
     palette:
         url: ../img/hypsometric01.png
+        # url: https://rawgit.com/tangrams/terrain-demos/master/img/hypsometric01.png
         # filtering: nearest
 
 styles: 
