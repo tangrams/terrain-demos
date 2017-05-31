@@ -24,7 +24,19 @@ Ways to manipulate heightmap data in [Tangram](http://github.com/tangrams/tangra
 - sunset spheremap: http://tangrams.github.io/terrain-demos/?url=styles/sunset.yaml
 - swiss style: http://tangrams.github.io/terrain-demos/?url=styles/imhof.yaml
 
-Check out the source code inside the scene files in the [styles directory](https://github.com/tangrams/terrain-demos/tree/gh-pages/styles)!
+Check out the source code for these and more examples in the [styles directory](https://github.com/tangrams/terrain-demos/tree/gh-pages/styles).
+
+### Elevation tiles vs. Normal tiles alpha elevation
+
+Mapzen offers two sources of elevation data: in the "terrarium" tiles, and also in the alpha channel of the normal tiles. Most of the examples in this repo are based on the elevation tiles, but some of them (such as normal-alpha-elevation.yaml) use the alpha channel of the normal tiles. This source is a bit trickier to use, but if you don't need the 24-bit resolution of the elevation tiles, and are already loading the normal tiles, it will make your styles faster.
+
+The elevation from the elevation tiles is a relatively simple linear encoding, but the elevation in the normal tiles alpha channel is quantized, non-linear, and 8-bit. (More information about this encoding can be found in [the documentation for our elevation datasource repository](https://github.com/tilezen/joerd/blob/master/docs/formats.md#normal).)
+
+To make this source simpler to interpret, we're using a "[decoder ring](https://wikipedia.org/wiki/Secret_decoder_ring)" image which maps the quantized range to the unquantized range as best it can. This image is generated with [a piece of JavaScript](decoder.js) which runs the quantize function in reverse, and creates a new image in a canvas element with the decoded output values for each input value. [You can run this script here](tangrams.github.io/terrain-demos/decoder.html). This image has also been pregenerated for your convenience, and is stored in this repo as [decoder.png](https://github.com/tangrams/terrain-demos/blob/master/img/decoder.png). It looks like this:
+
+![decoder ring image](https://github.com/tangrams/terrain-demos/blob/master/img/decoder.png)
+
+This image can be used as a texture in a heightmap shader, for easier decoding.
 
 ### To run locally:
 
