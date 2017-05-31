@@ -1,0 +1,73 @@
+sources:
+    mapzen:
+        type: TopoJSON
+        url: https://tile.mapzen.com/mapzen/vector/v1/all/{z}/{x}/{y}.topojson
+        url_params:
+            api_key: mapzen-tDHBHDp
+        max_zoom: 16
+        rasters: [normals, elevation]
+    normals:
+        type: Raster
+        url: https://tile.mapzen.com/mapzen/terrain/v1/normal/{z}/{x}/{y}.png
+        url_params:
+            api_key: mapzen-tDHBHDp
+        max_zoom: 15
+
+textures:
+    hypsometric:
+        url: ../img/gradient.png
+        # filtering: nearest
+    decoder:
+        url: ../img/decoder.png
+
+
+styles:
+    combo:
+        base: raster
+        shaders:
+            uniforms:
+                u_scale: 2
+                u_decoder: decoder
+                u_palette: hypsometric
+            blocks:
+                global: |
+                    float unpack(vec4 h) {
+                        // GPU reads each 0-255 channel as range 0-1, right where we want it
+                        // assemble to get un-normalized height
+                        return (h.r * 1. + h.g / 256. + h.b / 65536.);
+                    }
+                color: |
+                    // elevation from normal tile alpha
+                    float height = 1.0 - color.a;
+                    // set alpha to 1 so map isn't transparent
+                    color.a = 1.;
+
+                    // check height against decoder ring image to un-quantize it
+                    vec3 ring = texture2D(u_decoder, vec2(height,0.5)).rgb;
+                    ring.r *= 256.;
+                    ring.g *= 256. * 256.;
+                    height = (ring.r + ring.g);
+                    // range is now 0 - 19900, squish into 0 - 1:
+                    height /= 19900.;
+
+                    // height from normal alpha
+                    color.rgb = vec3(height);
+
+                    //// exaggerate
+                    // color.rgb = color.rgb * u_scale - (u_scale - 1.);
+
+                    // hypsometric gradient from texture
+                    color.rgb = texture2D(u_palette, vec2(color.r,0.5)).rgb;
+
+layers:
+    terrain:
+        data: { source: normals, layer: _default }
+        draw:
+            combo:
+                order: 0
+    water:
+        data: { source: mapzen}
+        draw:
+            polygons:
+                order: 4
+                color: lightblue
