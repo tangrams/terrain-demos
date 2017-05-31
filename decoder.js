@@ -64,6 +64,6 @@ window.onload = function() {
   }
   // grab the contents of the otherwise invisible canvas 
   var d=canvas.toDataURL("image/png");
-  // add make a new image with the contents of the canvas to the document
+  // add a new image with the contents of the canvas to the document
   document.write("<img src='"+d+"' alt='from canvas'/>");
 }
