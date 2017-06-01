@@ -1,68 +1,14 @@
+# simple map showing the reference elevation image used in 
+
 sources:
-    mapzen:
-        type: TopoJSON
-        url: https://tile.mapzen.com/mapzen/vector/v1/all/{z}/{x}/{y}.topojson
-        url_params:
-            api_key: mapzen-tDHBHDp
-        max_zoom: 16
-    elevation:
-        type: Raster
-        url: https://tile.mapzen.com/mapzen/terrain/v1/terrarium/{z}/{x}/{y}.png
-        url_params:
-            api_key: mapzen-tDHBHDp
-        max_zoom: 15
-        rasters: [ref]
     ref:
         type: Raster
-        url: http://localhost:8080/img/elevation0.png
+        url: ../img/elevation0.png
         max_zoom: 0
 
-textures:
-    palette:
-        url: http://localhost:8080/img/hypsometric01.png
-        # url: https://rawgit.com/tangrams/terrain-demos/master/img/hypsometric01.png
-        # filtering: nearest
-
-styles: 
-    hypsometric:
-        base: raster
-        raster: custom
-        lighting: false
-        shaders:
-            defines:
-                SCALE: 4.
-            uniforms:
-                u_palette: palette
-            blocks:
-                global: |
-                    float unpack(vec4 h) {
-                        // GPU reads each 0-255 channel as range 0-1, right where we want it
-                        // assemble to get height
-                        return (h.r * 1. + h.g / 256. + h.b / 65536.);
-                    }
-                color: |
-                    // I don't understand why this scale function works yet
-                    float height = unpack(sampleRaster(0)) * SCALE - (SCALE - 1.)/2.;
-                    color = vec4(1.0);
-                    // height to color from palette LUT
-                    // color = texture2D(u_palette, vec2(clamp(height,0.0,1.0),.5));
-                    float offset = -1. * sampleRaster(1).r / 5.;
-                    color = texture2D(u_palette, vec2(height + offset,0.5));
-
-                    color.rgb = vec3(sampleRaster(1).r);
-
-
 layers:
-    terrain:
-        data: { source: elevation, layer: _default }
+    elevation:
+        data: { source: ref }
         draw:
-            hypsometric:
+            raster:
                 order: 0
-                color: white
-    water:
-        data: { source: mapzen }
-        draw:
-            lines:
-                color: red
-                width: 1px
-                order: 1
