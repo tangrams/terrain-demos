@@ -35,7 +35,7 @@ styles:
                         return (h.r * 1. + h.g / 256. + h.b / 65536.);
                     }
                 color: |
-                    // I don't understand why this scale function works yet
+                    // compress levels by raising floor
                     float height = unpack(color) * SCALE - (SCALE - 1.)/2.;
                     color = vec4(1.0);
                     // height to color from palette LUT
