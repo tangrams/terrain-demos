@@ -1,0 +1,106 @@
+
+# this is a hypsometric map adjusted using a low-resolution global heightmap as
+# a reference image to pull up lower mountain ranges so they all mostly use the
+# same range in the hypsometric gradient.
+
+# After the adjustment, the map is no longer a true hypsometric – elevation and
+# color are no longer directly corellated. Instead, a degree of *relative*
+# elevation is factored in.
+
+# A separate, plain hypsometric gradient is used for bathymetric coloring.
+
+sources:
+    mapzen:
+        type: TopoJSON
+        url: https://tile.mapzen.com/mapzen/vector/v1/all/{z}/{x}/{y}.topojson
+        url_params:
+            api_key: mapzen-tDHBHDp
+        max_zoom: 16
+        rasters: [elevation, ref]
+    elevation:
+        type: Raster
+        url: https://tile.mapzen.com/mapzen/terrain/v1/terrarium/{z}/{x}/{y}.png
+        url_params:
+            api_key: mapzen-tDHBHDp
+        max_zoom: 15
+    ref:
+        type: Raster
+        url: ../img/elevation0.png
+        max_zoom: 0
+
+textures:
+    palette:
+        url: ../img/gradient.png
+    ocean:
+        url: ../img/gradient-ocean.png
+
+styles: 
+    land:
+        base: raster
+        raster: custom
+        lighting: false
+        shaders:
+            uniforms:
+                u_palette: palette
+            blocks:
+                global: |
+                    float unpack(vec4 h) {
+                        // GPU reads each 0-255 channel as range 0-1
+                        // assemble to get un-normalized height
+                        return (h.r * 1. + h.g / 256. + h.b / 65536.);
+                    }
+                color: |
+                    // elevation from elevation tiles
+                    float height = unpack(sampleRaster(0));
+                    // normalize to 0 - 1
+                    height = (height - 0.3321533203125)/(0.635833740234375 - 0.3321533203125);
+
+                    // reference image is monochromatic so we only need one channel
+                    float ref = sampleRaster(1).r;
+
+                    float limit = .55;
+                    float range = .05;
+                    float mask = smoothstep(limit, limit + range, ref);
+
+                    float offset = (1. - ref) / 5.;
+                    offset *= mask;
+
+                    //// set offset to 0 to see un-adjusted hypsometric
+                    // offset = 0.;
+
+                    color = texture2D(u_palette, vec2(height + offset,0.5));
+
+                    //// debugging
+                    //color.rgb = vec3(offset)*10.;
+                    //color.rgb = vec3(ref);
+                    //color.rgb = vec3(mask);
+    ocean:
+        base: raster
+        raster: custom
+        lighting: false
+        shaders:
+            defines:
+                SCALE: 4
+            uniforms:
+                u_palette: ocean
+            blocks:
+                global: |
+                    float unpack(vec4 h) {
+                        return (h.r * 1. + h.g / 256. + h.b / 65536.);
+                    }
+                color: |
+                    float height = unpack(sampleRaster(0)) * SCALE - (SCALE - 1.)/2.;
+                    float offset = 0.;
+                    color = texture2D(u_palette, vec2(height + offset,0.5));
+
+layers:
+    earth:
+        data: { source: mapzen}
+        draw:
+            land:
+                order: 0
+    water:
+        data: { source: mapzen}
+        draw:
+            ocean:
+                order: 1
