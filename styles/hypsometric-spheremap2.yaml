@@ -36,48 +36,62 @@ styles:
     combo:
         base: raster
         lighting: false
-        raster: custom
+        raster: normal
         shaders:
             defines:
                 SCALE: 4.
             uniforms:
-                u_scale: 3.
+                u_scale: .2
                 u_palette: hypsometric
                 u_envmap: spheremap
             blocks:
                 global: |
                     // Simplified view-independent environment map
-                    vec4 applyEnvmap (in sampler2D _tex, in vec3 _normal) {
-                        vec2 uv = 0.5 * _normal.xy + 0.5;
-                        return texture2D(_tex, uv);
-                    }
+                    // vec4 applyEnvmap (in sampler2D _tex, in vec3 _normal) {
+                    //     vec2 uv = 0.5 * _normal.xy + 0.5;
+                    //     return texture2D(_tex, uv);
+                    // }
                     float unpack(vec4 h) {
                         // GPU reads each 0-255 channel as range 0-1, right where we want it
                         // assemble to get height
                         return (h.r * 1. + h.g / 256. + h.b / 65536.);
                     }
+                    
+                    // Simplified view-independent environment map
+                    vec4 applyEnvmap (in sampler2D _tex, in vec3 _normal) {
+                        const vec3 eye = vec3(0.,0.,-1.);
+                        vec3 r = reflect(eye, _normal);
+                        r.z += 1.0;
+                        float m = 2. * length(r);
+                        vec2 uv = r.xy / m + .5;
+                        return texture2D(_tex, uv);
+                    }
                 color: |
                     // spheremap
-                    normal = sampleRaster(0).xyz;
-                    normal.z *= u_scale;
-                    normal = normalize(normal);
-                    vec3 spheremap = applyEnvmap(u_envmap, normal).rgb * 3. - 2.;
+                    // normal = sampleRaster(0).xyz * 2. - .5;
+                    float scale2 = 1./exp2(u_scale)-1.;
+                    normal.z *= scale2 * -1.;
+                    // normal = normalize(normal);
+                    // normal.z *= u_scale;
+                    // vec3 spheremap = applyEnvmap(u_envmap, normal).rgb * SCALE - (SCALE - 1.)/2.;
+                    // color = applyEnvmap(u_envmap, normal);
                     // vec3 spheremap = applyEnvmap(u_envmap, normal).rgb * 1.;
+                    vec3 spheremap = applyEnvmap(u_envmap, normal).rgb;
 
                     // add hypsometric
                     vec4 elevation = sampleRaster(1);
                     // compress range by raising lowest level
                     float height = unpack(elevation) * SCALE - (SCALE - 1.)/2.;
-                    
+
                     // height to color from palette LUT
                     // color = texture2D(u_palette, vec2(clamp(height,0.0,1.0),.5));
                     height = 1.0 - sampleRaster(0).a;
                     vec3 hypsometric = texture2D(u_palette, vec2(height,0.5)).rgb;
                     color.rgb = hypsometric * spheremap;
-                    
+
                     //// debugging
                     // color.rgb = hypsometric * 1.;
-                    // color.rgb = spheremap * 1.;
+                    color.rgb = spheremap * 1.;
                     // color.rgb = mix(hypsometric, spheremap, .5);
     hypsometric:
         base: raster
