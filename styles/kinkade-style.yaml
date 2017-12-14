@@ -1,0 +1,156 @@
+sources:
+    mapzen: 
+        type: TopoJSON
+        url: https://tile.mapzen.com/mapzen/vector/v1/all/{z}/{x}/{y}.topojson
+        url_params:
+            api_key: mapzen-PvCT6iP
+        max_zoom: 16
+        rasters: [normals]
+    normals:
+        type: Raster
+        url: https://tile.mapzen.com/mapzen/terrain/v1/normal/{z}/{x}/{y}.png
+        url_params:
+            api_key: mapzen-PvCT6iP
+        max_zoom: 15
+
+scene:
+    background:
+        color: white
+
+textures:
+    spheremap:
+        # element: "#kcanvas"
+        url: https://tangrams.github.io/terrain-demos/img/shade1.png
+
+global:
+    lines: true
+    water: true
+    labels: true
+
+styles: 
+    hillshade:
+        base: polygons
+        raster: normal
+        lighting: false
+        shaders:
+            uniforms:
+                u_scale: 5.
+                u_envmap: spheremap
+            blocks:
+                global: |
+                    // Simplified view-independent environment map
+                    vec4 applyEnvmap (in sampler2D _tex, in vec3 _normal) {
+                        return texture2D(_tex, .5*(_normal.xy + 1.));
+                    }
+                color: |
+                    float scale = 1./(exp2(u_scale)-1.);
+                    normal.z *= scale;
+                    normal = normalize(normal);
+                    color = applyEnvmap(u_envmap, normal);
+
+    dots:
+        base: lines
+        dash: [1, 2]
+    dashes:
+        base: lines
+        dash: [1, 3]
+
+layers:
+    earth:
+        data: { source: mapzen }
+        draw:
+            hillshade:
+                order: 0
+    water:
+        data: { source: mapzen }
+        draw:
+            polygons:
+                visible: global.water
+                order: 4
+                color: white
+            hillshade:
+                order: 3
+            lines:
+                visible: global.lines
+                order: 3
+                color: [.3, .3, .3]
+                width: .3px
+    places:
+        data: { source: mapzen }
+        filter: { not: { kind: [neighbourhood] } }
+        countries:
+            filter: { kind: country }
+            draw:
+                points:
+                    visible: global.labels
+                    priority: 1
+                    color: [0, 0, 0, 0]
+                    size: 80px
+                    text:
+                        collide: false
+                        anchor: center
+                        visible: global.labels
+                        font:
+                            transform: uppercase
+                            size: 10pt
+                            family: Lucida Grande
+                            fill: white
+                            stroke:
+                                color: black
+                                width: 2px
+        cities:
+            filter: { not: { kind_detail: [country, state] } }
+            also:
+                filter:
+                    any:
+                        - $zoom: { min: 6, max: 8 }
+                        - { labelrank: {min: 5}, $zoom: { max: 6 }}
+                        - { population: { min: 100000 } , $zoom: {min: 8 } }
+                        - { population: { min: 50000 } , $zoom: {min: 12 } }
+                draw:
+                    points:
+                        visible: global.labels
+                        priority: 2
+                        color: '#aaa'
+                        size: 8px
+                        text:
+                            optional: false
+                            font:
+                                size: 8pt
+                                family: Lucida Grande
+                                fill: white
+                                stroke:
+                                    color: black
+                                    width: 2px
+        states:
+            filter:
+                - kind_detail: state
+                  $zoom: { min: 6 }
+            draw:
+                text:
+                    visible: global.labels
+                    priority: 3
+                    font:
+                        transform: uppercase
+                        size: 10pt
+                        family: Lucida Grande
+                        fill: white
+                        stroke:
+                            color: black
+                            width: 2px
+    boundaries:
+        data: { source: mapzen }
+        draw:
+            dots:
+                order: 5
+                visible: global.lines
+                color: [.75, .75, .75]
+                width: 1px
+    roads:
+        data: { source: mapzen }
+        draw:
+            dashes:
+                order: 6
+                visible: global.lines
+                color: [.5, .5, .5]
+                width: 1px

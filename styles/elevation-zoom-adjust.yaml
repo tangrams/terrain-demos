@@ -1,0 +1,165 @@
+sources:
+    mapzen:
+        type: TopoJSON
+        url: https://tile.mapzen.com/mapzen/vector/v1/all/{z}/{x}/{y}.topojson
+        url_params:
+            api_key: mapzen-tDHBHDp
+        max_zoom: 16
+        rasters: [normals]
+    normals:
+        type: Raster
+        url: https://tile.mapzen.com/mapzen/terrain/v1/normal/{z}/{x}/{y}.png
+        url_params:
+            api_key: mapzen-tDHBHDp
+        max_zoom: 15
+
+textures:
+    hypsometric:
+        url: ../img/gradient.png
+        # filtering: nearest
+    spheremap:
+        url: ../img/shade1.png
+        # filtering: nearest
+    decoder:
+        url: ../img/decoder.png
+
+
+styles:
+    # combination of hypsometric and spheremap, using two separate textures
+    combo:
+        base: raster
+        lighting: false
+        raster: color
+        shaders:
+            defines:
+                SCALE: 4.
+            uniforms:
+                u_contrast: 1.
+                u_brightness: 1.
+                u_scale: 8.
+                u_palette: hypsometric
+                u_envmap: spheremap
+                u_decoder: decoder
+                u_zoom_scale: 3.5
+            blocks:
+                global: |
+                    // Simplified view-independent environment map
+                    vec4 applyEnvmap (in sampler2D _tex, in vec3 _normal, in float scale) {
+                        _normal.z *= scale;
+                        return texture2D(_tex, .5*(normalize(_normal).xy + 1.));
+                    }
+                    float unpack(vec4 h) {
+                        // GPU reads each 0-255 channel as range 0-1, right where we want it
+                        // assemble to get un-normalized height
+                        return (h.r * 1. + h.g / 256. + h.b / 65536.);
+                    }
+                color: |
+                    // spheremap
+                    normal = color.rgb;
+                    normal.z *= u_scale;
+                    normal = normalize(normal);
+
+                    // turn terrain exaggeration up/down
+                    // fade out spheremap normals with a function
+                    float scale1 = 20./(u_map_position.z) + 1.5;
+                    float m = u_zoom_scale * (u_map_position.z - 0.8) * exp(u_map_position.z * -.29);
+                    m = clamp(m, 0., 1.5);
+
+                    // color = vec4(1., 0, 0, 1);
+                    // color = applyEnvmap(u_envmap, normal, 1./scale1);
+                    // vec3 spheremap = applyEnvmap(u_envmap, normal).rgb * 3. - 2.;
+                    // vec3 spheremap = applyEnvmap(u_envmap, normal).rgb * 1.;
+
+                    // apply contrast and brightness
+                    // color -= .1;
+                    // float contrast = m;
+                    // color.rgb = ((color.rgb - 0.5) * max(contrast, 0.)) + 0.5;
+                    // float brightness = .5 - m * .5;
+                    // color.rgb += brightness;
+
+                    // add hypsometric
+                    vec4 elevation = sampleRaster(1);
+                    float height1 = unpack(elevation);
+                    // normalize to 0 - 1
+                    height1 = (height1 - 0.3321533203125)/(0.635833740234375 - 0.3321533203125);
+                    // scale range by lifting lower end
+                    // float height1 = unpack(elevation) * SCALE - (SCALE - 1.)/2.;
+                    // // color = vec4(1.0);
+                    // height to color from palette LUT
+                    color = texture2D(u_palette, vec2(clamp(height1,0.0,1.0),.5));
+                    // color = texture2D(u_palette, vec2(height1,.5));
+
+                    // elevation from normal tile
+                    float height = 1.0 - sampleRaster(0).a;
+
+                    // check height against decoder ring to un-quantize it
+                    vec3 ring = texture2D(u_decoder, vec2(height,0.5)).rgb;
+                    ring.r *= 256.;
+                    ring.g *= 256. * 256.;
+                    // range is now 0 - 
+                    height = (ring.r + ring.g);
+                    height /= 19900.;
+                    // height = 10000.;
+
+
+                    vec3 hypsometric = texture2D(u_palette, vec2(height,0.5)).rgb;
+                    // // color.rgb = hypsometric * spheremap;
+                    // color.rgb *= hypsometric;
+                    // color = vec4(1.);
+                    // color.rgb *= height;
+                    // color.rgb = test;
+                    color.rgb = hypsometric;
+                    color.rgb = vec3(height);
+                    // color.rgb = vec3(height1);
+                    // color.rgb = vec3(height-height1)*50.;
+                    // color.rgb *= spheremap * 1.;
+
+    hypsometric:
+        base: raster
+        lighting: false
+        shaders:
+            blocks:
+                global: |
+                color: |
+
+
+layers:
+    terrain:
+        data: { source: normals, layer: _default }
+        draw:
+            combo:
+                order: 0
+                color: white
+    roads:
+        data: { source: mapzen}
+        draw:
+            lines:
+                order: 5
+                color: [.8, .3, .3]
+                width: 2px
+
+    water:
+        data: { source: mapzen}
+        enabled: false
+        draw:
+            polygons:
+                order: 4
+                color: lightblue
+                // width: 2px
+            lines:
+                order: 5
+                color: [.2, .2, .8]
+                width: .5px
+    landuse:
+        data: { source: mapzen}
+        filter: { kind: [forest, park, conservation, nature_reserve, national_park] }
+        draw:
+            # polygons:
+            #     order: 1
+            #     color: green
+            # width: 2px
+            # lines:
+            #     style: textured-lines
+            #     order: 200
+            #     color: blue
+            #     width: 10px
