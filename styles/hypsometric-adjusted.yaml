@@ -12,16 +12,12 @@
 sources:
     mapzen:
         type: TopoJSON
-        url: https://tile.mapzen.com/mapzen/vector/v1/all/{z}/{x}/{y}.topojson
-        url_params:
-            api_key: mapzen-tDHBHDp
-        max_zoom: 16
+        url: https://meetar.github.io/mapzen-tiles/vector/v1/256/all/{z}/{x}/{y}.topojson
+        max_zoom: 8
         rasters: [elevation, ref]
     elevation:
         type: Raster
-        url: https://tile.mapzen.com/mapzen/terrain/v1/terrarium/{z}/{x}/{y}.png
-        url_params:
-            api_key: mapzen-tDHBHDp
+        url: https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png
         max_zoom: 15
     ref:
         type: Raster
