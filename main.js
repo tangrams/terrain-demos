@@ -47,7 +47,7 @@ map = (function () {
 
     var layer = Tangram.leafletLayer({
         scene: scene_url,
-        attribution: '<a href="https://mapzen.com/tangram" target="_blank">Tangram</a> | &copy; OSM contributors | <a href="https://mapzen.com/" target="_blank">Mapzen</a>'
+        attribution: '<a href="https://github.com/tangrams/tangram" target="_blank">Tangram</a> | &copy; OSM contributors | <a href="https://nextzen.org/" target="_blank">Nextzen</a>'
     });
 
     if (query.quiet) {
