@@ -4,19 +4,25 @@ scene:
         color: white
 
 sources:
-    mapzen:
-        type: TopoJSON
-        url: https://meetar.github.io/mapzen-tiles/vector/v1/256/all/{z}/{x}/{y}.topojson
+    nextzen:
+        type: MVT
+        url: https://tile.nextzen.org/tilezen/vector/v1/256/all/{z}/{x}/{y}.mvt
+        url_params:
+            api_key: your-nextzen-api-key
         max_zoom: 8
         rasters: [heightmap, normals]
     heightmap:
         type: Raster
-        url: https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png
+        url: https://tile.nextzen.org/tilezen/terrain/v1/256/terrarium/{z}/{x}/{y}.png
+        url_params:
+            api_key: your-nextzen-api-key
         max_zoom: 15
         rasters: [normals]
     normals:
         type: Raster
-        url: https://s3.amazonaws.com/elevation-tiles-prod/normal/{z}/{x}/{y}.png
+        url: https://tile.nextzen.org/tilezen/terrain/v1/256/normal/{z}/{x}/{y}.png
+        url_params:
+            api_key: your-nextzen-api-key
         max_zoom: 15
 
 styles: 
@@ -62,12 +68,12 @@ styles:
 
 layers:
     earth:
-        data: { source: mapzen }
+        data: { source: nextzen }
         draw:
             hillshade:
                 order: 1
     water:
-        data: { source: mapzen }
+        data: { source: nextzen }
         filter: { kind: [lakes], boundary: true }
         draw:
             lines: 

@@ -1,7 +1,9 @@
 sources:
-    mapzen:
-        type: TopoJSON
-        url: https://meetar.github.io/mapzen-tiles/vector/v1/256/all/{z}/{x}/{y}.topojson
+    nextzen:
+        type: MVT
+        url: https://tile.nextzen.org/tilezen/vector/v1/256/all/{z}/{x}/{y}.mvt
+        url_params:
+            api_key: your-nextzen-api-key
         max_zoom: 8
     ref:
         type: Raster

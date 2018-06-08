@@ -1,16 +1,16 @@
 sources:
-    mapzen: 
-        type: TopoJSON
-        url: https://tile.mapzen.com/mapzen/vector/v1/all/{z}/{x}/{y}.topojson
+    nextzen:
+        type: MVT
+        url: https://tile.nextzen.org/tilezen/vector/v1/256/all/{z}/{x}/{y}.mvt
         url_params:
-            api_key: mapzen-PvCT6iP
-        max_zoom: 16
+            api_key: your-nextzen-api-key
+        max_zoom: 8
         rasters: [normals]
     normals:
         type: Raster
-        url: https://tile.mapzen.com/mapzen/terrain/v1/normal/{z}/{x}/{y}.png
+        url: https://tile.nextzen.org/tilezen/terrain/v1/256/normal/{z}/{x}/{y}.png
         url_params:
-            api_key: mapzen-PvCT6iP
+            api_key: your-nextzen-api-key
         max_zoom: 15
 
 scene:
@@ -57,12 +57,12 @@ styles:
 
 layers:
     earth:
-        data: { source: mapzen }
+        data: { source: nextzen }
         draw:
             hillshade:
                 order: 0
     water:
-        data: { source: mapzen }
+        data: { source: nextzen }
         draw:
             polygons:
                 visible: global.water
@@ -76,7 +76,7 @@ layers:
                 color: [.3, .3, .3]
                 width: .3px
     places:
-        data: { source: mapzen }
+        data: { source: nextzen }
         filter: { not: { kind: [neighbourhood] } }
         countries:
             filter: { kind: country }
@@ -139,7 +139,7 @@ layers:
                             color: black
                             width: 2px
     boundaries:
-        data: { source: mapzen }
+        data: { source: nextzen }
         draw:
             dots:
                 order: 5
@@ -147,7 +147,7 @@ layers:
                 color: [.75, .75, .75]
                 width: 1px
     roads:
-        data: { source: mapzen }
+        data: { source: nextzen }
         draw:
             dashes:
                 order: 6

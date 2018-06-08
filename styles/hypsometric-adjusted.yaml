@@ -10,14 +10,18 @@
 # A separate, plain hypsometric gradient is used for bathymetric coloring.
 
 sources:
-    mapzen:
-        type: TopoJSON
-        url: https://meetar.github.io/mapzen-tiles/vector/v1/256/all/{z}/{x}/{y}.topojson
+    nextzen:
+        type: MVT
+        url: https://tile.nextzen.org/tilezen/vector/v1/256/all/{z}/{x}/{y}.mvt
+        url_params:
+            api_key: your-nextzen-api-key
         max_zoom: 8
         rasters: [elevation, ref]
     elevation:
         type: Raster
-        url: https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png
+        url: https://tile.nextzen.org/tilezen/terrain/v1/256/terrarium/{z}/{x}/{y}.png
+        url_params:
+            api_key: your-nextzen-api-key
         max_zoom: 15
     ref:
         type: Raster
@@ -91,12 +95,12 @@ styles:
 
 layers:
     earth:
-        data: { source: mapzen}
+        data: { source: nextzen}
         draw:
             land:
                 order: 0
     water:
-        data: { source: mapzen}
+        data: { source: nextzen}
         draw:
             ocean:
                 order: 1

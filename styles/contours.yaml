@@ -2,13 +2,17 @@ scene:
     animated: true
 
 sources:
-    mapzen:
-        type: TopoJSON
-        url: https://meetar.github.io/mapzen-tiles/vector/v1/256/all/{z}/{x}/{y}.topojson
+    nextzen:
+        type: MVT
+        url: https://tile.nextzen.org/tilezen/vector/v1/256/all/{z}/{x}/{y}.mvt
+        url_params:
+            api_key: your-nextzen-api-key
         max_zoom: 8
     elevation:
         type: Raster
-        url: https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png
+        url: https://tile.nextzen.org/tilezen/terrain/v1/256/terrarium/{z}/{x}/{y}.png
+        url_params:
+            api_key: your-nextzen-api-key
         max_zoom: 15
 
 styles: 
@@ -69,7 +73,7 @@ layers:
                 order: 0
 
     water:
-        data: { source: mapzen }
+        data: { source: nextzen }
         filter:
             - boundary: true
         draw:
@@ -79,7 +83,7 @@ layers:
                 width: 1px
 
     places:
-        data: { source: mapzen }
+        data: { source: nextzen }
         filter: 
             kind: [city]
         draw:

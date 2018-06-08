@@ -2,7 +2,9 @@
 sources:
     normals:
         type: Raster
-        url: https://s3.amazonaws.com/elevation-tiles-prod/normal/{z}/{x}/{y}.png
+        url: https://tile.nextzen.org/tilezen/terrain/v1/256/normal/{z}/{x}/{y}.png
+        url_params:
+            api_key: your-nextzen-api-key
         max_zoom: 15
 
 lights:

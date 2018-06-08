@@ -1,12 +1,16 @@
 sources:
-    mapzen:
-        type: TopoJSON
-        url: https://meetar.github.io/mapzen-tiles/vector/v1/256/all/{z}/{x}/{y}.topojson
+    nextzen:
+        type: MVT
+        url: https://tile.nextzen.org/tilezen/vector/v1/256/all/{z}/{x}/{y}.mvt
+        url_params:
+            api_key: your-nextzen-api-key
         max_zoom: 8
         rasters: [normals]
     normals:
         type: Raster
-        url: https://s3.amazonaws.com/elevation-tiles-prod/normal/{z}/{x}/{y}.png
+        url: https://tile.nextzen.org/tilezen/terrain/v1/256/normal/{z}/{x}/{y}.png
+        url_params:
+            api_key: your-nextzen-api-key
         max_zoom: 15
 
 styles:
@@ -17,7 +21,7 @@ styles:
         shaders:
             uniforms:
                 u_scale: .15
-                u_envmap: http://crossorigin.me/https://github.com/tangrams/terrain-demos/raw/gh-pages/img/imhof5.jpg
+                u_envmap: https://raw.githubusercontent.com/tangrams/terrain-demos/master/img/imhof5.jpg
             blocks:
                 global: |
                     // Simplified view-independent environment map
@@ -25,7 +29,7 @@ styles:
                         vec2 uv = 0.5 * _normal.xy + 0.5;
                         return texture2D(_tex, uv);
                     }
-                color: |                    
+                color: |
                     normal.z *= u_scale;
                     normal = normalize(normal);
                     color = applyEnvmap(u_envmap, normal);
@@ -43,7 +47,7 @@ styles:
         mix: terrain-envmap
         shaders:
             blocks:
-                color: |                    
+                color: |
                     color *= vec4(1.2);
 layers:
     terrain:
@@ -53,7 +57,7 @@ layers:
                 order: 0
 
     places:
-        data: { source: mapzen }
+        data: { source: nextzen }
         filter: 
             kind: [city]
         draw:
@@ -63,13 +67,13 @@ layers:
                     size: 16px
                     stroke: { color: '#444', width: 4px}
     boundaries:
-        data: { source: mapzen }
+        data: { source: nextzen }
         draw:
             dots:
                 color: [.75, .75, .75]
                 width: 1px
     water:
-        data: { source: mapzen }
+        data: { source: nextzen }
         lines:
             filter: {boundary: true}
             draw:
@@ -78,13 +82,13 @@ layers:
                     color: [.3, .3, .3]
                     width: .3px
     water-terrain:
-        data: { source: mapzen, layer: water }
+        data: { source: nextzen, layer: water }
         draw:
             fadepolys:
                 order: 4
 
     roads:
-        data: { source: mapzen }
+        data: { source: nextzen }
         draw:
             fadelines:
                 order: 3
@@ -103,7 +107,7 @@ layers:
                             color: function() {return [0, 0, 0, $zoom/15.];}
                             width: 1px
     places:
-        data: { source: mapzen }
+        data: { source: nextzen }
         filter: { not: { kind: [neighbourhood] } }
         countries:
             filter: { kind: country }
@@ -152,7 +156,7 @@ layers:
                             color: black
                             width: 2px
     buildings:
-        data: {source: mapzen }
+        data: {source: nextzen }
         draw:
             fadelines:
                 order: 10
