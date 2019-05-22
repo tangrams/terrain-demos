@@ -11,7 +11,7 @@ sources:
         url: https://tile.nextzen.org/tilezen/terrain/v1/256/normal/{z}/{x}/{y}.png
         url_params:
             api_key: your-nextzen-api-key
-        max_zoom: 15
+        max_zoom: 14
 
 textures:
     hypsometric:
@@ -96,7 +96,7 @@ styles:
                     vec3 ring = texture2D(u_decoder, vec2(height,0.5)).rgb;
                     ring.r *= 256.;
                     ring.g *= 256. * 256.;
-                    // range is now 0 - 
+                    // range is now 0 -
                     height = (ring.r + ring.g);
                     height /= 19900.;
                     // height = 10000.;

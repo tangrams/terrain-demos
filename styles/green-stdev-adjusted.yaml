@@ -4,7 +4,7 @@ sources:
         url: https://tile.nextzen.org/tilezen/terrain/v1/256/normal/{z}/{x}/{y}.png
         url_params:
             api_key: your-nextzen-api-key
-        max_zoom: 15
+        max_zoom: 14
 
 lights:
     directional1:
@@ -13,7 +13,7 @@ lights:
         diffuse: [1, 1.000, 0.75]
         ambient: [0.2, 0.3, 0.3]
 
-styles: 
+styles:
     hillshade:
         base: raster
         raster: normal
@@ -57,7 +57,7 @@ styles:
                     // finally, take the magnitude of the vector standard deviation
                     stdev = vec3(dot(stdev,stdev));
                     // scale to taste
-                    
+
                     // account for brightness differences across a single zoom level
                     float scale = 80.;
                     stdev *= scale - (scale/2. - fract * scale/2.);

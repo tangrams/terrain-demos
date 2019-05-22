@@ -22,7 +22,7 @@ sources:
         url: https://tile.nextzen.org/tilezen/terrain/v1/256/terrarium/{z}/{x}/{y}.png
         url_params:
             api_key: your-nextzen-api-key
-        max_zoom: 15
+        max_zoom: 14
     ref:
         type: Raster
         url: ../img/elevation0.png
@@ -34,7 +34,7 @@ textures:
     ocean:
         url: ../img/gradient-ocean.png
 
-styles: 
+styles:
     land:
         base: raster
         raster: custom

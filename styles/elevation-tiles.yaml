@@ -10,9 +10,9 @@ sources:
         url: https://tile.nextzen.org/tilezen/terrain/v1/256/terrarium/{z}/{x}/{y}.png
         url_params:
             api_key: your-nextzen-api-key
-        max_zoom: 15
+        max_zoom: 14
 
-styles: 
+styles:
     hillshade:
         base: raster
         lighting: false
@@ -28,14 +28,14 @@ layers:
         data: { source: nextzen }
         filter: { boundary: true }
         draw:
-            lines: 
+            lines:
                 order: 2
                 color: [.3, .3, .3]
                 width: 1px
 
     places:
         data: { source: nextzen }
-        filter: 
+        filter:
             kind: [city]
         draw:
             text:

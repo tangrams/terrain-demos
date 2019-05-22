@@ -10,9 +10,9 @@ sources:
         url: https://tile.nextzen.org/tilezen/terrain/v1/256/terrarium/{z}/{x}/{y}.png
         url_params:
             api_key: your-nextzen-api-key
-        max_zoom: 15
+        max_zoom: 14
 
-styles: 
+styles:
     hillshade:
         base: raster
         lighting: false
@@ -27,12 +27,12 @@ styles:
                 color: |
                     float height = unpack(color);
                     color = vec4(1.0);
-                    
+
                     // Color ramps
                     vec3 colors[5];
                     colors[0] = vec3(0.);
                     colors[1] = vec3(1.);
-                                        
+
                     color.rgb = mix(colors[0], colors[1], height * 50. - 25.);
 
 

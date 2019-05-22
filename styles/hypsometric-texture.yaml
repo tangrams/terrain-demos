@@ -10,7 +10,7 @@ sources:
         url: https://tile.nextzen.org/tilezen/terrain/v1/256/terrarium/{z}/{x}/{y}.png
         url_params:
             api_key: your-nextzen-api-key
-        max_zoom: 15
+        max_zoom: 14
 
 textures:
     palette:
@@ -18,7 +18,7 @@ textures:
         # url: https://rawgit.com/tangrams/terrain-demos/master/img/hypsometric01.png
         # filtering: nearest
 
-styles: 
+styles:
     hypsometric:
         base: raster
         lighting: false

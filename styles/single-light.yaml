@@ -10,7 +10,7 @@ sources:
         url: https://tile.nextzen.org/tilezen/terrain/v1/256/normal/{z}/{x}/{y}.png
         url_params:
             api_key: your-nextzen-api-key
-        max_zoom: 15
+        max_zoom: 14
 
 lights:
     light:
@@ -18,7 +18,7 @@ lights:
         direction: [1, -1, -.01]
         diffuse: 10.0
 
-styles: 
+styles:
     hillshade:
         base: raster
         shaders:

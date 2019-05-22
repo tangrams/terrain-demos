@@ -4,7 +4,7 @@ sources:
         url: https://tile.nextzen.org/tilezen/terrain/v1/256/normal/{z}/{x}/{y}.png
         url_params:
             api_key: your-nextzen-api-key
-        max_zoom: 15
+        max_zoom: 14
 
 lights:
     directional1:
@@ -13,7 +13,7 @@ lights:
         diffuse: [1, 1.000, 0.75]
         ambient: [0.2, 0.3, 0.3]
 
-styles: 
+styles:
     hillshade:
         base: raster
         lighting: false
@@ -36,7 +36,7 @@ styles:
                         return floor(x*255.);
                     }
                     // pack a vec3 into a scalar for sorting
-                    float pack(vec3 c) {   
+                    float pack(vec3 c) {
                         float lum = (c.x+c.y+c.z)*(1./3.);
                         // sort by pseudo-luminance – put that in MSB and quantize everything to 8 bit
                         // since floats represent 24 bit ints you get 3 channels and only have to sort a scalar value
@@ -80,7 +80,7 @@ styles:
                         Sort();
 
                         //median of medians is pretty near the true median
-                        normal = vec3(unpack(sort[(SORT_SIZE/2)]));   
+                        normal = vec3(unpack(sort[(SORT_SIZE/2)]));
                 color: |
                     color.rgb = normal;
 

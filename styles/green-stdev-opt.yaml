@@ -5,7 +5,7 @@ sources:
         url: https://tile.nextzen.org/tilezen/terrain/v1/256/normal/{z}/{x}/{y}.png
         url_params:
             api_key: your-nextzen-api-key
-        max_zoom: 15
+        max_zoom: 14
 
 lights:
     directional1:
@@ -14,7 +14,7 @@ lights:
         diffuse: [1, 1.000, 0.75]
         ambient: [0.2, 0.3, 0.3]
 
-styles: 
+styles:
     hillshade:
         base: raster
         raster: normal
@@ -23,7 +23,7 @@ styles:
                 normal: |
                     // box blur masked with standard deviation
                     // adapted from https://www.shadertoy.com/view/XdfGDH
-                    
+
                     // set some constants, to reduce math operations later
                     const int mSize = 5; // kernel width
                     const int kSize = (mSize-1)/2; // 2
