@@ -1,6 +1,3 @@
-scene:
-    animated: true
-
 sources:
     nextzen:
         type: MVT
@@ -18,6 +15,7 @@ sources:
 styles:
     hillshade:
         base: raster
+        animated: true
         lighting: false
         texcoords: true
         shaders:
