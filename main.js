@@ -76,7 +76,10 @@ map = (function () {
 
     var hash = new L.Hash(map);
 
-    layer.addTo(map);
+    // wait to add map until window is loaded, to avoid race condition with API key replacement
+    window.addEventListener('load', function () {
+        layer.addTo(map);
+    });
 
     return map;
 
