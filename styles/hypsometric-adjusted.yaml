@@ -25,7 +25,7 @@ sources:
         max_zoom: 14
     ref:
         type: Raster
-        url: ../img/elevation0.png
+        url: ../img/elevation0.png?{x}{y}{z}
         max_zoom: 0
 
 textures:
