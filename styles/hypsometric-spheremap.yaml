@@ -22,12 +22,12 @@ sources:
 textures:
     hypsometric:
         # url: ../img/hypsometric01.png
-        url: https://rawgit.com/tangrams/terrain-demos/master/img/hypsometric01.png
+        url: https://raw.githubusercontent.com/tangrams/terrain-demos/master/img/hypsometric01.png
         # filtering: nearest
     spheremap:
         # url: ../img/imhof.jpg
         # url: https://rawgit.com/tangrams/terrain-demos/master/img/imhof5.jpg
-        url: https://rawgit.com/tangrams/terrain-demos/master/img/shade1.png
+        url: https://raw.githubusercontent.com/tangrams/terrain-demos/master/img/shade1.png
         # url: http://localhost:8080/img/shade1.png
         # filtering: nearest
 
